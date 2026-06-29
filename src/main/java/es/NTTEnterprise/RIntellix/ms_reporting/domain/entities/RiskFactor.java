@@ -9,6 +9,9 @@ import lombok.Setter;
 
 /**
  * A single risk factor identified by the AI analyst in the risk report.
+ * 
+ * @author Lucía Fernández Mancebo
+ * @Date 29-06-2026
  */
 @Getter
 @Setter
@@ -17,7 +20,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RiskFactor {
 
+    /**
+     * The name or title of the risk factor.
+     */
     private String factor;
+
+    /**
+     * The severity level of this risk factor.
+     */
     private Severity severity;
+
+    /**
+     * Detailed explanation of the risk factor.
+     */
     private String description;
 }

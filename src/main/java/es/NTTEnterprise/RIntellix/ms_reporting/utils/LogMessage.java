@@ -2,10 +2,18 @@ package es.NTTEnterprise.RIntellix.ms_reporting.utils;
 
 /**
  * Centralized log message templates for the ms-reporting microservice.
+ * This class provides consistent and reusable log message templates
+ * to ensure uniform logging across all layers of the application.
+ * 
+ * @author Lucía Fernández Mancebo
+ * @Date 29-06-2026
  */
 public final class LogMessage {
 
+    public static final String UTILITY_CLASS_NEVER_INSTANTIATE = "Never instantiate";
+
     private LogMessage() {
+        throw new UnsupportedOperationException(UTILITY_CLASS_NEVER_INSTANTIATE);
     }
 
     public static final String LOG_VALUE_UNKNOWN = "UNKNOWN";
@@ -17,6 +25,8 @@ public final class LogMessage {
             "Received persistScoring message without requestId";
     public static final String KAFKA_MESSAGE_PROCESSED =
             "Report generated and message acknowledged for requestId={}";
+    public static final String KAFKA_CONSUMER_ERROR = 
+            "Error processing persistScoring message at offset {}: {}";
 
     // Report generation service
     public static final String REPORT_GENERATION_START =

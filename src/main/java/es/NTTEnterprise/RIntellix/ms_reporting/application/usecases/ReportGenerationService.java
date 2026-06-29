@@ -14,6 +14,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.GenerateAiRep
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.RenderReportPdfPort;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.StoreReportPort;
 import es.NTTEnterprise.RIntellix.ms_reporting.utils.LogMessage;
+import es.NTTEnterprise.RIntellix.ms_reporting.utils.ReportConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,18 +26,26 @@ import lombok.extern.slf4j.Slf4j;
  *   <li>Render the report to a PDF binary.</li>
  *   <li>Persist the report document through ms-core-data.</li>
  * </ol>
+ * 
+ * @author Lucía Fernández Mancebo
+ * @Date 29-06-2026
  */
 @Slf4j
 public class ReportGenerationService implements ReportGenerationPortService {
-
-    private static final String GENERATED_BY = "ms-reporting";
-    private static final String LANGUAGE_SPANISH = "es";
 
     private final FetchScoringPort fetchScoringPort;
     private final GenerateAiReportPort generateAiReportPort;
     private final RenderReportPdfPort renderReportPdfPort;
     private final StoreReportPort storeReportPort;
 
+    /**
+     * Constructs a ReportGenerationService with its output port dependencies.
+     *
+     * @param fetchScoringPort     the port to fetch scoring data
+     * @param generateAiReportPort the port to generate AI reports
+     * @param renderReportPdfPort  the port to render PDF documents
+     * @param storeReportPort      the port to persist reports
+     */
     public ReportGenerationService(
             final FetchScoringPort fetchScoringPort,
             final GenerateAiReportPort generateAiReportPort,
@@ -50,7 +59,7 @@ public class ReportGenerationService implements ReportGenerationPortService {
 
     @Override
     public Report generateReport(final String requestId) {
-        Objects.requireNonNull(requestId, "requestId is required");
+        Objects.requireNonNull(requestId, ReportConstants.REQUEST_ID_REQUIRED_MSG);
         log.info(LogMessage.REPORT_GENERATION_START, requestId);
 
         final long startNanos = System.nanoTime();
@@ -84,6 +93,13 @@ public class ReportGenerationService implements ReportGenerationPortService {
         return report;
     }
 
+    /**
+     * Builds the Report aggregate entity from the scoring and AI generated content.
+     *
+     * @param scoringData the scoring source data
+     * @param aiContent   the AI generated content
+     * @return the constructed Report
+     */
     private Report buildReport(final ScoringData scoringData, final AiReportContent aiContent) {
         return Report.builder()
                 .partyId(scoringData.getPartyId())
@@ -95,10 +111,10 @@ public class ReportGenerationService implements ReportGenerationPortService {
                 .riskAnalysis(aiContent.getRiskAnalysis())
                 .riskFactors(aiContent.getRiskFactors())
                 .recommendations(aiContent.getRecommendations())
-                .generatedBy(GENERATED_BY)
+                .generatedBy(ReportConstants.GENERATED_BY)
                 .generatedDate(new Date())
                 .modelVersion(generateAiReportPort.getModelName())
-                .language(LANGUAGE_SPANISH)
+                .language(ReportConstants.LANGUAGE_SPANISH)
                 .build();
     }
 }

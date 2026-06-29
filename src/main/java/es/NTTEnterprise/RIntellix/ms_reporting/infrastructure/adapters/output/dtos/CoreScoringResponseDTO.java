@@ -1,47 +1,37 @@
-package es.NTTEnterprise.RIntellix.ms_reporting.domain.entities;
+package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos;
 
 import java.util.List;
 import java.util.Map;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Aggregated scoring information retrieved from ms-core-data for a request.
- * Carries the identifiers required by the report (scoringId, requestId,
- * partyId) plus the risk metrics and explainability that are sent to the AI
- * analyst to build the report.
+ * Mirror of the response returned by ms-core-data's
+ * {@code GET /api/requests/{requestId}/scoring} endpoint (ScoringDTO).
  * 
  * @author Lucía Fernández Mancebo
  * @Date 29-06-2026
  */
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ScoringData {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CoreScoringResponseDTO {
 
     /**
-     * Unique identifier of the computed scoring.
+     * Unique computed scoring identifier.
      */
     private String scoringId;
 
     /**
-     * Unique identifier of the credit request.
+     * Associated request identifier.
      */
     private String requestId;
 
     /**
-     * Unique identifier of the party requesting credit.
-     */
-    private String partyId;
-
-    /**
-     * Version of the ML model used to generate this scoring.
+     * Version of the ML model used to generate scoring.
      */
     private String modelVersion;
 
@@ -111,7 +101,7 @@ public class ScoringData {
     private Double baseValue;
 
     /**
-     * List of top features explaining the scoring contribution.
+     * List of top contributing features (explainability).
      */
-    private List<TopFeature> topFeatures;
+    private List<CoreTopFeatureDTO> topFeatures;
 }

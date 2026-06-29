@@ -80,14 +80,14 @@
     </logger>
 
     <!-- Infrastructure Layer - Input Adapters (Kafka consumers) -->
-    <logger name="es.NTTEnterprise.RIntellix.ms_reporting.infraestructure.adapters.input" level="INFO" additivity="false">
+    <logger name="es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.input" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </logger>
 
     <!-- Infrastructure Layer - Output Adapters -->
-    <logger name="es.NTTEnterprise.RIntellix.ms_reporting.infraestructure.adapters.output" level="DEBUG" additivity="false">
+    <logger name="es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>

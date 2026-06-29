@@ -1,4 +1,4 @@
-package es.NTTEnterprise.RIntellix.ms_reporting.infraestructure.adapters.output;
+package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

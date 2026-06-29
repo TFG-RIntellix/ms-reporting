@@ -1,26 +1,23 @@
-package es.NTTEnterprise.RIntellix.ms_reporting.domain.entities;
+package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A SHAP top contributing feature of the scoring, used as part of the AI input.
+ * Mirror of ms-core-data's TopFeatureDTO (SHAP explainability).
  * 
  * @author Lucía Fernández Mancebo
  * @Date 29-06-2026
  */
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TopFeature {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CoreTopFeatureDTO {
 
     /**
-     * The name of the feature from the ML model.
+     * The name of the feature contributor.
      */
     private String featureName;
 
