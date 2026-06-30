@@ -1,4 +1,4 @@
-package es.NTTEnterprise.RIntellix.ms_reporting.es.NTTEnterprise.app.ms_reporting;
+package es.NTTEnterprise.RIntellix.ms_reporting;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,7 +6,7 @@ import org.springframework.retry.annotation.EnableRetry;
 
 /**
  * Entry point for the ms-reporting microservice.
- * Consumes scoring results published by ms-risk-engine on the persistScoring
+ * Consumes scoring results published by ms-risk-engine on the PersistScoring
  * Kafka topic, builds an AI-generated risk report (via Gemini), renders it as a
  * PDF and persists the report document through ms-core-data.
  * 

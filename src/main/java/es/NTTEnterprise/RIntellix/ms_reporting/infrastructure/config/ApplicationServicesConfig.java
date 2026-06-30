@@ -10,6 +10,8 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.GenerateAiRep
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.RenderReportPdfPort;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.StoreReportPort;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Wires the framework-agnostic application services to their output port
  * adapters, keeping the application layer free of Spring annotations.
@@ -19,6 +21,16 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.StoreReportPo
  */
 @Configuration
 public class ApplicationServicesConfig {
+
+    /**
+     * Declares the ObjectMapper bean used for JSON serialization and deserialization.
+     *
+     * @return the ObjectMapper instance
+     */
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
 
     /**
      * Declares the ReportGenerationPortService bean coordinating report generation.

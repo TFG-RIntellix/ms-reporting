@@ -5,8 +5,9 @@ import java.util.List;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.AiReportContent;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.RiskFactor;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.enums.Severity;
-import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos.gemini.GeminiReportPayload;
 import es.NTTEnterprise.RIntellix.ms_reporting.utils.ReportConstants;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Maps the Gemini JSON response payload to the domain {@link AiReportContent} aggregate.
@@ -18,6 +19,26 @@ public final class GeminiReportMapper {
 
     private GeminiReportMapper() {
         throw new UnsupportedOperationException(ReportConstants.PDF_HYPHEN);
+    }
+
+    /**
+     * Data Transfer Object for parsing the Gemini JSON response.
+     */
+    public record GeminiReportPayload(
+            String title,
+            @JsonProperty("ai_summary") String aiSummary,
+            @JsonProperty("risk_analysis") String riskAnalysis,
+            @JsonProperty("risk_factors") List<RiskFactorPayload> riskFactors,
+            List<String> recommendations) {
+    }
+
+    /**
+     * Nested Data Transfer Object for risk factors within the Gemini payload.
+     */
+    public record RiskFactorPayload(
+            String factor,
+            String severity,
+            String description) {
     }
 
     /**

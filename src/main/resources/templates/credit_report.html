@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Informe de Calificación Crediticia</title>
+    <style>
+        /* CSS reset and base */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 14px;
+            background-color: #edeae3;
+            color: #0f1c3f;
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            /* In OpenHtmlToPdf, page size is set via CSS @page */
+        }
+
+        @page {
+            size: A4;
+            margin: 0; /* Full bleed or set margins */
+            @bottom-center {
+                content: counter(page) " / " counter(pages);
+                font-size: 10px;
+                color: #5a6278;
+            }
+        }
+
+        /* Header Bar */
+        .header-bar {
+            background-color: #0f1c3f;
+            padding: 30px 40px;
+            color: #ffffff;
+        }
+        .header-bar .subtitle {
+            color: #c8a96e;
+            font-size: 10px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .header-bar h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            font-family: 'Georgia', serif;
+        }
+        .header-bar .request-id {
+            color: rgba(191, 219, 254, 0.6);
+            font-size: 12px;
+            font-family: monospace;
+            margin: 0;
+        }
+
+        .header-flex {
+            display: table;
+            width: 100%;
+        }
+        .header-left, .header-right {
+            display: table-cell;
+            vertical-align: top;
+        }
+        .header-right {
+            text-align: right;
+            width: 120px;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            text-align: center;
+            line-height: 80px;
+            font-size: 36px;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+            color: #ffffff;
+        }
+        .grade-label {
+            color: rgba(191, 219, 254, 0.8);
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .bg-emerald { background-color: #059669; }
+        .bg-red { background-color: #dc2626; }
+        .bg-amber { background-color: #d97706; }
+
+        /* Meta Strip */
+        .meta-strip {
+            background-color: #182347;
+            padding: 12px 40px;
+            color: rgba(191, 219, 254, 0.5);
+            font-size: 10px;
+            font-family: monospace;
+        }
+        .meta-strip span {
+            margin-right: 30px;
+        }
+        .meta-label {
+            color: rgba(191, 219, 254, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Body */
+        .content-body {
+            padding: 40px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            color: #0f1c3f;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(200, 169, 110, 0.4);
+            padding-bottom: 5px;
+        }
+
+        /* Executive Summary */
+        .summary-box {
+            background-color: #f0ede8;
+            border-left: 4px solid #c8a96e;
+            padding: 16px 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #0f1c3f;
+            margin-bottom: 30px;
+        }
+
+        /* Paragraphs */
+        .analysis-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #2b334d;
+            margin-bottom: 16px;
+        }
+
+        /* Risk Factors Table */
+        .risk-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #e8ecf4;
+        }
+        .risk-table th {
+            background-color: #0f1c3f;
+            color: rgba(191, 219, 254, 0.7);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 20px;
+            text-align: left;
+        }
+        .risk-table td {
+            padding: 16px 20px;
+            border-top: 1px solid #e8ecf4;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+        .risk-table tr:nth-child(even) {
+            background-color: #faf9f7;
+        }
+        
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .severity-alto { background-color: #fee2e2; color: #991b1b; }
+        .severity-medio { background-color: #fef3c7; color: #92400e; }
+        .severity-bajo { background-color: #d1fae5; color: #065f46; }
+
+        /* Recommendations */
+        .recommendations {
+            margin-bottom: 30px;
+        }
+        .recommendation-item {
+            display: table;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        .recommendation-num {
+            display: table-cell;
+            width: 24px;
+            height: 24px;
+            background-color: #0f1c3f;
+            color: #c8a96e;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+        }
+        .recommendation-text {
+            display: table-cell;
+            padding-left: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #2b334d;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid #e8ecf4;
+            padding-top: 20px;
+            font-size: 10px;
+            color: #5a6278;
+            display: table;
+            width: 100%;
+        }
+        .footer-left { display: table-cell; }
+        .footer-right { display: table-cell; text-align: right; }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+
+    <!-- Header Bar -->
+    <div class="header-bar">
+        <div class="header-flex">
+            <div class="header-left">
+                <div class="subtitle">Análisis de Riesgo de Crédito</div>
+                <h1 th:text="${report.title != null ? report.title : 'Informe de Calificación Crediticia'}">Informe de Calificación Crediticia</h1>
+                <div class="request-id">Solicitud ID: <span th:text="${report.requestId}"></span></div>
+            </div>
+            <div class="header-right">
+                <div class="grade-badge" th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red' : 'bg-emerald'}" th:text="${dto.grade}">A</div>
+                <div class="grade-label" th:text="${#strings.equals(dto.grade, 'D') ? 'Riesgo Alto' : 'Riesgo Bajo'}">Riesgo Bajo</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meta Strip -->
+    <div class="meta-strip">
+        <span><span class="meta-label">Scoring ID:</span> <span th:text="${report.scoringId}"></span></span>
+        <span><span class="meta-label">Modelo IA:</span> <span th:text="${report.modelVersion}"></span></span>
+        <span><span class="meta-label">Fecha:</span> <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span></span>
+    </div>
+
+    <!-- Content Body -->
+    <div class="content-body">
+
+        <!-- Executive Summary -->
+        <div class="section-title">Resumen Ejecutivo</div>
+        <div class="summary-box" th:text="${report.aiSummary}">
+            Summary text...
+        </div>
+
+        <!-- Risk Analysis -->
+        <div class="section-title">Análisis de Riesgo</div>
+        <div class="analysis-text" th:text="${report.riskAnalysis}">
+            Analysis text...
+        </div>
+
+        <!-- Risk Factors -->
+        <div class="section-title">Factores de Riesgo Identificados</div>
+        <table class="risk-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%">Factor</th>
+                    <th style="width: 15%">Severidad</th>
+                    <th style="width: 60%">Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="factor : ${report.riskFactors}">
+                    <td style="font-weight: bold; color: #0f1c3f;" th:text="${factor.factor}">Factor Name</td>
+                    <td>
+                        <span class="severity-badge" 
+                              th:classappend="${factor.severity != null and factor.severity.name() == 'ALTO' ? 'severity-alto' : (factor.severity != null and factor.severity.name() == 'MEDIO' ? 'severity-medio' : 'severity-bajo')}"
+                              th:text="${factor.severity != null ? factor.severity : 'BAJO'}">BAJO</span>
+                    </td>
+                    <td th:text="${factor.description}">Description</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Recommendations -->
+        <div class="section-title">Recomendaciones</div>
+        <div class="recommendations">
+            <div class="recommendation-item" th:each="rec, iterStat : ${report.recommendations}">
+                <div class="recommendation-num" th:text="${iterStat.count}">1</div>
+                <div class="recommendation-text" th:text="${rec}">Recommendation text...</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-left">
+                <span style="color: #c8a96e; font-weight: bold;">Modelo IA:</span> <span th:text="${report.modelVersion}"></span> &#160;|&#160;
+                <span style="color: #c8a96e; font-weight: bold;">Scoring:</span> <span th:text="${report.scoringId}"></span>
+            </div>
+            <div class="footer-right">
+                Generado el <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

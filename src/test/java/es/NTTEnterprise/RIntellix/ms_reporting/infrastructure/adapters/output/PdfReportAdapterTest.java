@@ -18,7 +18,13 @@ class PdfReportAdapterTest {
 
     @Test
     void shouldRenderNonEmptyPdfWithoutFilePathWhenOutputDirNotConfigured() {
-        final PdfReportAdapter adapter = new PdfReportAdapter("");
+        final org.thymeleaf.TemplateEngine templateEngine = org.mockito.Mockito.mock(org.thymeleaf.TemplateEngine.class);
+        org.mockito.Mockito.when(templateEngine.process(
+                org.mockito.Mockito.eq("credit_report"),
+                org.mockito.Mockito.any(org.thymeleaf.context.Context.class)))
+            .thenReturn("<html><body><h1>Informe de Calificacion</h1></body></html>");
+
+        final PdfReportAdapter adapter = new PdfReportAdapter("", templateEngine);
         final Report report = sampleReport();
 
         final RenderedPdf rendered = adapter.render(report);

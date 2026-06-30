@@ -40,16 +40,21 @@ public class HttpClientConfig {
     }
 
     /**
-     * Declares the RestClient bean for communicating with the Gemini API.
+     * Declares the GenAI Client bean for communicating with the Gemini API.
      *
-     * @param baseUrl the configured base url of the Gemini API
-     * @return the rest client instance
+     * @param apiKey  the configured Gemini API key
+     * @param baseUrl the configured Gemini base URL
+     * @return the Client instance
      */
     @Bean(GEMINI_CLIENT)
-    public RestClient geminiRestClient(
-            @Value("${gemini.base-url:https://generativelanguage.googleapis.com}") final String baseUrl) {
-        return RestClient.builder()
-                .baseUrl(baseUrl)
+    public com.google.genai.Client geminiClient(
+            @Value("${gemini.api-key}") final String apiKey,
+            @Value("${gemini.base-url}") final String baseUrl) {
+        return com.google.genai.Client.builder()
+                .apiKey(apiKey)
+                .httpOptions(com.google.genai.types.HttpOptions.builder()
+                        .baseUrl(baseUrl)
+                        .build())
                 .build();
     }
 }
