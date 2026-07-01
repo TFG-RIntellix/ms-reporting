@@ -115,6 +115,7 @@ public class ReportGenerationService implements ReportGenerationPortService {
                 .generatedDate(new Date())
                 .modelVersion(generateAiReportPort.getModelName())
                 .language(ReportConstants.LANGUAGE_SPANISH)
+                .scoringData(scoringData)
                 .build();
     }
 }

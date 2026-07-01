@@ -1,6 +1,8 @@
 package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -24,7 +26,9 @@ class PdfReportAdapterTest {
                 org.mockito.Mockito.any(org.thymeleaf.context.Context.class)))
             .thenReturn("<html><body><h1>Informe de Calificacion</h1></body></html>");
 
-        final PdfReportAdapter adapter = new PdfReportAdapter("", templateEngine);
+        final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine));
+        byte[] fakePdfBytes = "%PDF-1.4 fake".getBytes(StandardCharsets.ISO_8859_1);
+        doReturn(fakePdfBytes).when(adapter).generatePdf(org.mockito.Mockito.anyString());
         final Report report = sampleReport();
 
         final RenderedPdf rendered = adapter.render(report);

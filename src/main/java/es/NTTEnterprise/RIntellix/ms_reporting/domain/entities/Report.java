@@ -105,4 +105,9 @@ public class Report {
      * Language of the generated report.
      */
     private String language;
+
+    /**
+     * Scoring data used to generate the report.
+     */
+    private ScoringData scoringData;
 }
