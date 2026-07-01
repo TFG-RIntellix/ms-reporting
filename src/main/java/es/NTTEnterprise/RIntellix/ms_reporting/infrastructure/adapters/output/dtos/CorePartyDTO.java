@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Partial mirror of ms-core-data's RequestDetailsDTO, used to resolve the
- * {@code partyId} and {@code partyName} required by the report. Both fields are
- * exposed by ms-core-data's {@code GET /api/requests/{id}} endpoint. Unknown
- * properties are ignored so the mapping stays forward-compatible.
+ * Mirror of ms-core-data's internal RequestPartyDTO, used to resolve the
+ * {@code partyId} and {@code partyName} required by the report. These fields are
+ * exposed by ms-core-data's internal {@code GET /api/requests/{id}/party}
+ * endpoint. Unknown properties are ignored so the mapping stays
+ * forward-compatible.
  *
  * @author Lucía Fernández Mancebo
  * @Date 29-06-2026
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CoreRequestDetailsDTO {
+public class CorePartyDTO {
 
     /**
      * Unique request identifier.

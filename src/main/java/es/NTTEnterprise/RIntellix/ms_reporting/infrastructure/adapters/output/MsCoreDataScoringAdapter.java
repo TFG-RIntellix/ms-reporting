@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClientResponseException;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.ScoringData;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions.ScoringNotAvailableException;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.FetchScoringPort;
-import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos.CoreRequestDetailsDTO;
+import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos.CorePartyDTO;
 import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos.CoreScoringResponseDTO;
 import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.config.HttpClientConfig;
 import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.ScoringDataMapper;
@@ -52,9 +52,9 @@ public class MsCoreDataScoringAdapter implements FetchScoringPort {
         log.info(LogMessage.SCORING_FETCH_START, requestId);
 
         final CoreScoringResponseDTO scoring = fetchScoring(requestId);
-        final CoreRequestDetailsDTO details = resolveRequestDetails(requestId);
-        final String partyId = details != null ? details.getPartyId() : null;
-        final String partyName = details != null ? details.getPartyName() : null;
+        final CorePartyDTO party = resolveRequestParty(requestId);
+        final String partyId = party != null ? party.getPartyId() : null;
+        final String partyName = party != null ? party.getPartyName() : null;
 
         return ScoringDataMapper.toDomain(scoring, partyId, partyName);
     }
@@ -82,18 +82,18 @@ public class MsCoreDataScoringAdapter implements FetchScoringPort {
     }
 
     /**
-     * Resolves the request details (partyId and partyName) from ms-core-data
-     * requests details API.
+     * Resolves the party reference (partyId and partyName) from ms-core-data's
+     * internal request party API.
      *
      * @param requestId the request ID to query
-     * @return the associated request details, or null if not resolved
+     * @return the associated party reference, or null if not resolved
      */
-    private CoreRequestDetailsDTO resolveRequestDetails(final String requestId) {
+    private CorePartyDTO resolveRequestParty(final String requestId) {
         try {
             return restClient.get()
-                    .uri(ReportConstants.MS_CORE_DATA_REQUEST_DETAILS_PATH, requestId)
+                    .uri(ReportConstants.MS_CORE_DATA_REQUEST_PARTY_PATH, requestId)
                     .retrieve()
-                    .body(CoreRequestDetailsDTO.class);
+                    .body(CorePartyDTO.class);
         } catch (RestClientResponseException ex) {
             log.warn(LogMessage.PARTY_RESOLVE_WARN, requestId);
             return null;

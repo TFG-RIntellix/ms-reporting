@@ -25,7 +25,7 @@ public final class ReportConstants {
 
     // REST Paths for ms-core-data
     public static final String MS_CORE_DATA_SCORING_PATH = "/api/requests/{requestId}/scoring";
-    public static final String MS_CORE_DATA_REQUEST_DETAILS_PATH = "/api/requests/{requestId}";
+    public static final String MS_CORE_DATA_REQUEST_PARTY_PATH = "/api/requests/{requestId}/party";
     public static final String MS_CORE_DATA_REPORTS_PATH = "/api/reports";
 
     // Gemini API Configurations
