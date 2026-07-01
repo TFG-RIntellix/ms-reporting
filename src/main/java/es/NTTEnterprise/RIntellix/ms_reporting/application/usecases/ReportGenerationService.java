@@ -106,7 +106,7 @@ public class ReportGenerationService implements ReportGenerationPortService {
                 .requestId(scoringData.getRequestId())
                 .scoringId(scoringData.getScoringId())
                 .reportType(ReportType.RISK_ANALYSIS)
-                .title(aiContent.getTitle())
+                .title(buildTitle(scoringData, aiContent))
                 .aiSummary(aiContent.getAiSummary())
                 .riskAnalysis(aiContent.getRiskAnalysis())
                 .riskFactors(aiContent.getRiskFactors())
@@ -117,5 +117,18 @@ public class ReportGenerationService implements ReportGenerationPortService {
                 .language(ReportConstants.LANGUAGE_SPANISH)
                 .scoringData(scoringData)
                 .build();
+    }
+
+    /**
+     * Builds the report title using the party name, e.g.
+     * {@code "Informe de Evaluación de Riesgo de Crédito - <partyName>"}.
+     * Falls back to the AI-generated title when the party name is not available.
+     */
+    private String buildTitle(final ScoringData scoringData, final AiReportContent aiContent) {
+        final String partyName = scoringData.getPartyName();
+        if (partyName != null && !partyName.isBlank()) {
+            return ReportConstants.REPORT_TITLE_PREFIX + partyName.trim();
+        }
+        return aiContent.getTitle();
     }
 }

@@ -6,12 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Partial mirror of ms-core-data's RequestDetailsDTO, used only to resolve the
- * {@code partyId} required by the report.
- * NOTE: ms-core-data does not expose {@code partyId} on this endpoint yet; this
- * field will be populated once that small change is made on the ms-core-data
- * side. Unknown properties are ignored so the mapping stays forward-compatible.
- * 
+ * Partial mirror of ms-core-data's RequestDetailsDTO, used to resolve the
+ * {@code partyId} and {@code partyName} required by the report. Both fields are
+ * exposed by ms-core-data's {@code GET /api/requests/{id}} endpoint. Unknown
+ * properties are ignored so the mapping stays forward-compatible.
+ *
  * @author Lucía Fernández Mancebo
  * @Date 29-06-2026
  */

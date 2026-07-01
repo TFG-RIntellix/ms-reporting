@@ -41,6 +41,11 @@ public class ScoringData {
     private String partyId;
 
     /**
+     * Full name of the party requesting credit, used in the report title.
+     */
+    private String partyName;
+
+    /**
      * Version of the ML model used to generate this scoring.
      */
     private String modelVersion;

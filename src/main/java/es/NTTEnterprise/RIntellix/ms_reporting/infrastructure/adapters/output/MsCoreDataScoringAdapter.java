@@ -52,9 +52,11 @@ public class MsCoreDataScoringAdapter implements FetchScoringPort {
         log.info(LogMessage.SCORING_FETCH_START, requestId);
 
         final CoreScoringResponseDTO scoring = fetchScoring(requestId);
-        final String partyId = resolvePartyId(requestId);
+        final CoreRequestDetailsDTO details = resolveRequestDetails(requestId);
+        final String partyId = details != null ? details.getPartyId() : null;
+        final String partyName = details != null ? details.getPartyName() : null;
 
-        return ScoringDataMapper.toDomain(scoring, partyId);
+        return ScoringDataMapper.toDomain(scoring, partyId, partyName);
     }
 
     /**
@@ -80,18 +82,18 @@ public class MsCoreDataScoringAdapter implements FetchScoringPort {
     }
 
     /**
-     * Resolves the partyId from ms-core-data requests details API.
+     * Resolves the request details (partyId and partyName) from ms-core-data
+     * requests details API.
      *
      * @param requestId the request ID to query
-     * @return the associated party ID or null if not resolved
+     * @return the associated request details, or null if not resolved
      */
-    private String resolvePartyId(final String requestId) {
+    private CoreRequestDetailsDTO resolveRequestDetails(final String requestId) {
         try {
-            final CoreRequestDetailsDTO details = restClient.get()
+            return restClient.get()
                     .uri(ReportConstants.MS_CORE_DATA_REQUEST_DETAILS_PATH, requestId)
                     .retrieve()
                     .body(CoreRequestDetailsDTO.class);
-            return details != null ? details.getPartyId() : null;
         } catch (RestClientResponseException ex) {
             log.warn(LogMessage.PARTY_RESOLVE_WARN, requestId);
             return null;

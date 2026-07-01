@@ -17,6 +17,7 @@ public final class ReportConstants {
     // General App Settings
     public static final String GENERATED_BY = "ms-reporting";
     public static final String LANGUAGE_SPANISH = "es";
+    public static final String REPORT_TITLE_PREFIX = "Informe de Evaluación de Riesgo de Crédito - ";
     public static final String REQUEST_ID_REQUIRED_MSG = "requestId is required";
     public static final String REPORT_REQUIRED_MSG = "report is required";
     public static final String SCORING_RESPONSE_REQUIRED_MSG = "scoring response is required";

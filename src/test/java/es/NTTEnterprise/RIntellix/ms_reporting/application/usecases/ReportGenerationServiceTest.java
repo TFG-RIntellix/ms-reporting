@@ -35,6 +35,7 @@ class ReportGenerationServiceTest {
     private static final String REQUEST_ID = "req-1";
     private static final String SCORING_ID = "sco-1";
     private static final String PARTY_ID = "party-1";
+    private static final String PARTY_NAME = "Juan Pérez García";
     private static final String MODEL = "gemini-2.0-flash";
 
     @Mock
@@ -60,6 +61,7 @@ class ReportGenerationServiceTest {
                 .scoringId(SCORING_ID)
                 .requestId(REQUEST_ID)
                 .partyId(PARTY_ID)
+                .partyName(PARTY_NAME)
                 .build();
         final AiReportContent aiContent = AiReportContent.builder()
                 .title("Informe")
@@ -85,6 +87,8 @@ class ReportGenerationServiceTest {
         assertThat(result.getRequestId()).isEqualTo(REQUEST_ID);
         assertThat(result.getPartyId()).isEqualTo(PARTY_ID);
         assertThat(result.getReportType()).isEqualTo(ReportType.RISK_ANALYSIS);
+        assertThat(result.getTitle())
+                .isEqualTo("Informe de Evaluación de Riesgo de Crédito - " + PARTY_NAME);
         assertThat(result.getGeneratedBy()).isEqualTo("ms-reporting");
         assertThat(result.getLanguage()).isEqualTo("es");
         assertThat(result.getModelVersion()).isEqualTo(MODEL);
@@ -96,6 +100,32 @@ class ReportGenerationServiceTest {
         final ArgumentCaptor<Report> stored = ArgumentCaptor.forClass(Report.class);
         verify(storeReportPort).store(stored.capture());
         assertThat(stored.getValue().getScoringId()).isEqualTo(SCORING_ID);
+    }
+
+    @Test
+    void shouldFallBackToAiTitleWhenPartyNameMissing() {
+        final ScoringData scoringData = ScoringData.builder()
+                .scoringId(SCORING_ID)
+                .requestId(REQUEST_ID)
+                .partyId(PARTY_ID)
+                .build();
+        final AiReportContent aiContent = AiReportContent.builder()
+                .title("Informe generado por IA")
+                .aiSummary("Resumen")
+                .riskAnalysis("Análisis")
+                .riskFactors(List.of())
+                .recommendations(List.of("Revisar"))
+                .build();
+
+        when(fetchScoringPort.fetchScoringData(REQUEST_ID)).thenReturn(scoringData);
+        when(generateAiReportPort.generateReport(scoringData)).thenReturn(aiContent);
+        when(generateAiReportPort.getModelName()).thenReturn(MODEL);
+        when(renderReportPdfPort.render(any(Report.class)))
+                .thenReturn(new RenderedPdf(new byte[] {1, 2}, 2, null));
+
+        final Report result = service.generateReport(REQUEST_ID);
+
+        assertThat(result.getTitle()).isEqualTo("Informe generado por IA");
     }
 
     @Test
