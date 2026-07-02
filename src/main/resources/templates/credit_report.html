@@ -90,7 +90,7 @@
             </span>
         </div>
 
-        <div class="px-10 py-8 space-y-10">
+        <div class="px-10 py-8">
             <!-- KPI Cards -->
             <section>
                 <div class="flex items-center gap-3 mb-4">
@@ -106,7 +106,7 @@
             </section>
 
             <!-- Decision Banner -->
-            <div class="border rounded-lg px-6 py-4 flex items-center gap-4" th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}">
+            <div class="border rounded-lg px-6 py-4 flex items-center gap-4 mt-10" th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}">
                 <div class="w-2 h-12 rounded-full" th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red-600' : 'bg-emerald-600'}"></div>
                 <div>
                     <p class="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Decisión Recomendada</p>
@@ -115,7 +115,7 @@
             </div>
 
             <!-- Executive Summary -->
-            <section>
+            <section class="pt-10">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Resumen Ejecutivo</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
@@ -126,7 +126,7 @@
             </section>
 
             <!-- Financial Profile -->
-            <section>
+            <section class="pt-10">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Perfil Financiero del Solicitante</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
@@ -140,7 +140,7 @@
             </section>
 
             <!-- Charts Row (Simplified HTML/Tailwind version of Recharts) -->
-            <section>
+            <section class="break-inside-avoid pt-10">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Análisis Visual</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
@@ -188,7 +188,7 @@
             </section>
 
             <!-- Risk Analysis -->
-            <section>
+            <section class="pt-10">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Análisis de Riesgo</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
@@ -199,7 +199,7 @@
             </section>
 
             <!-- Risk Factors Table -->
-            <section>
+            <section class="break-inside-avoid pt-10">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Factores de Riesgo Identificados</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
@@ -231,7 +231,7 @@
             </section>
 
             <!-- Recommendations -->
-            <section>
+            <section class="break-inside-avoid pt-10">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Recomendaciones</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
@@ -245,7 +245,7 @@
             </section>
 
             <!-- Footer -->
-            <div class="border-t border-border pt-6 flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+            <div class="border-t border-border pt-6 mt-10 flex items-center justify-between text-[10px] text-muted-foreground font-mono">
                 <div>
                     <span class="text-[#c8a96e] font-semibold">Modelo IA:</span> <span th:text="${report.modelVersion}"></span> &nbsp;|&nbsp;
                     <span class="text-[#c8a96e] font-semibold">Scoring:</span> <span th:text="${report.scoringId}"></span>

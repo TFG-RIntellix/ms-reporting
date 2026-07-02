@@ -94,13 +94,14 @@ public class PdfReportAdapter implements RenderReportPdfPort {
             String grade = data.getRiskGrade() != null ? data.getRiskGrade() : "A";
             dto.put("grade", grade);
 
-            boolean isRisk = "D".equals(grade) || "E".equals(grade) || "F".equals(grade);
+            boolean isRisk = "D".equals(grade) || "E".equals(grade) || "F".equals(grade) || "G".equals(grade);
             dto.put("decision", isRisk ? "REVISAR" : "APROBAR");
 
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
 
             String loanType = "-";
-            if (data.getInputFeatures() != null && data.getInputFeatures().containsKey("loanType") && data.getInputFeatures().containsKey("purpose")) {
+            if (data.getInputFeatures() != null && data.getInputFeatures().containsKey("loanType")
+                    && data.getInputFeatures().containsKey("purpose")) {
                 loanType = data.getInputFeatures().get("loanType") + " — " + data.getInputFeatures().get("purpose");
             }
             dto.put("loanType", loanType.replace("_", " "));
@@ -108,9 +109,10 @@ public class PdfReportAdapter implements RenderReportPdfPort {
             dto.put("kpis", List.of(
                     Map.of("label", "Probabilidad de Impago (PD)", "value", formatPercent(data.getPd())),
                     Map.of("label", "Severidad de Pérdida (LGD)", "value", formatPercent(data.getLgd())),
-                    Map.of("label", "Exposición en Caso de Impago (EAD)", "value", currencyFormat.format(safeDouble(data.getEad()))),
-                    Map.of("label", "Pérdida Esperada (ECL)", "value", currencyFormat.format(safeDouble(data.getEcl())))
-            ));
+                    Map.of("label", "Exposición en Caso de Impago (EAD)", "value",
+                            currencyFormat.format(safeDouble(data.getEad()))),
+                    Map.of("label", "Pérdida Esperada (ECL)", "value",
+                            currencyFormat.format(safeDouble(data.getEcl())))));
 
             Double annualIncome = 0.0;
             Double loanAmount = 0.0;
@@ -119,10 +121,12 @@ public class PdfReportAdapter implements RenderReportPdfPort {
             Double ltv = 0.0;
 
             if (data.getInputFeatures() != null) {
-                annualIncome = parseDoubleStrict(data.getInputFeatures().get("annualIncome"));
-                loanAmount = parseDoubleStrict(data.getInputFeatures().get("loanAmount"));
-                interestRate = parseDoubleStrict(data.getInputFeatures().get("interestRate"));
-                Object termObj = data.getInputFeatures().get("termMonths");
+                annualIncome = parseDoubleStrict(data.getInputFeatures().get("annual_income"));
+                loanAmount = parseDoubleStrict(data.getInputFeatures().get("requested_amount") != null
+                        ? data.getInputFeatures().get("requested_amount")
+                        : data.getInputFeatures().get("requested_limit"));
+                interestRate = parseDoubleStrict(data.getInputFeatures().get("interest_rate"));
+                Object termObj = data.getInputFeatures().get("term_months");
                 termMonths = termObj instanceof Number ? ((Number) termObj).intValue() : 0;
                 ltv = parseDoubleStrict(data.getInputFeatures().get("ltv"));
             }
@@ -130,22 +134,25 @@ public class PdfReportAdapter implements RenderReportPdfPort {
             dto.put("financials", List.of(
                     Map.of("label", "Ingreso Anual", "value", currencyFormat.format(safeDouble(annualIncome))),
                     Map.of("label", "Monto Solicitado", "value", currencyFormat.format(safeDouble(loanAmount))),
-                    Map.of("label", "Cuota Mensual", "value", currencyFormat.format(safeDouble(data.getMonthlyPayment()))),
-                    Map.of("label", "Ingreso Disponible", "value", currencyFormat.format(safeDouble(data.getMonthlyDisposableIncome()))),
+                    Map.of("label", "Cuota Mensual", "value",
+                            currencyFormat.format(safeDouble(data.getMonthlyPayment()))),
+                    Map.of("label", "Ingreso Disponible", "value",
+                            currencyFormat.format(safeDouble(data.getMonthlyDisposableIncome()))),
                     Map.of("label", "Tasa de Interés", "value", formatPercent(interestRate)),
                     Map.of("label", "Plazo", "value", termMonths + " meses"),
                     Map.of("label", "LTV", "value", ltv > 0 ? formatPercent(ltv) : "N/A"),
-                    Map.of("label", "DTI", "value", formatPercent(data.getDti()))
-            ));
+                    Map.of("label", "DTI", "value", formatPercent(data.getDti()))));
 
             Double dtiVal = safeDouble(data.getDti());
             dto.put("dti", formatPercent(dtiVal));
             dto.put("dtiDasharray", String.valueOf(Math.min(1.0, dtiVal) * 314.0));
 
             if (dtiVal > 0.40) {
-                dto.put("dtiText", "DTI elevado. Más del 40% de los ingresos mensuales se destina al servicio de deudas, reduciendo la resiliencia financiera.");
+                dto.put("dtiText",
+                        "DTI elevado. Más del 40% de los ingresos mensuales se destina al servicio de deudas, reduciendo la resiliencia financiera.");
             } else {
-                dto.put("dtiText", "DTI saludable. El solicitante dedica una proporción manejable de sus ingresos al servicio de la deuda.");
+                dto.put("dtiText",
+                        "DTI saludable. El solicitante dedica una proporción manejable de sus ingresos al servicio de la deuda.");
             }
 
             if (data.getTopFeatures() != null) {
@@ -161,8 +168,7 @@ public class PdfReportAdapter implements RenderReportPdfPort {
                             "name", tf.getFeatureName(),
                             "shap", shapStr,
                             "direction", direction,
-                            "widthPct", widthPct
-                    ));
+                            "widthPct", widthPct));
                 }
                 dto.put("shapFactors", shapList);
             } else {
@@ -185,7 +191,8 @@ public class PdfReportAdapter implements RenderReportPdfPort {
     }
 
     private String formatPercent(Double value) {
-        if (value == null) return "0.00%";
+        if (value == null)
+            return "0.00%";
         return String.format(new Locale("es", "ES"), "%.2f%%", value * 100);
     }
 
@@ -194,8 +201,10 @@ public class PdfReportAdapter implements RenderReportPdfPort {
     }
 
     private Double parseDoubleStrict(Object value) {
-        if (value == null) return 0.0;
-        if (value instanceof Number) return ((Number) value).doubleValue();
+        if (value == null)
+            return 0.0;
+        if (value instanceof Number)
+            return ((Number) value).doubleValue();
         if (value instanceof String) {
             try {
                 return Double.parseDouble((String) value);
