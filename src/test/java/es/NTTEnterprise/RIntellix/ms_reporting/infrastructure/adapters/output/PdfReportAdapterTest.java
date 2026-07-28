@@ -1,5 +1,9 @@
 package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output;
 
+import org.mockito.Mockito;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -20,15 +24,15 @@ class PdfReportAdapterTest {
 
     @Test
     void shouldRenderNonEmptyPdfWithoutFilePathWhenOutputDirNotConfigured() {
-        final org.thymeleaf.TemplateEngine templateEngine = org.mockito.Mockito.mock(org.thymeleaf.TemplateEngine.class);
-        org.mockito.Mockito.when(templateEngine.process(
-                org.mockito.Mockito.eq("credit_report"),
-                org.mockito.Mockito.any(org.thymeleaf.context.Context.class)))
+        final TemplateEngine templateEngine = Mockito.mock(TemplateEngine.class);
+        Mockito.when(templateEngine.process(
+                Mockito.eq("credit_report"),
+                Mockito.any(Context.class)))
             .thenReturn("<html><body><h1>Informe de Calificacion</h1></body></html>");
 
         final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine));
         byte[] fakePdfBytes = "%PDF-1.4 fake".getBytes(StandardCharsets.ISO_8859_1);
-        doReturn(fakePdfBytes).when(adapter).generatePdf(org.mockito.Mockito.anyString());
+        doReturn(fakePdfBytes).when(adapter).generatePdf(Mockito.anyString());
         final Report report = sampleReport();
 
         final RenderedPdf rendered = adapter.render(report);

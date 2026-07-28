@@ -53,7 +53,7 @@ public class GeminiReportAdapter implements GenerateAiReportPort {
     public GeminiReportAdapter(
             @Qualifier(HttpClientConfig.GEMINI_CLIENT) final Client genaiClient,
             final ObjectMapper objectMapper,
-            @Value("${gemini.model:gemini-3.5-flash}") final String model) {
+            @Value("${gemini.model:gemini-3.1-flash-lite}") final String model) {
         this.genaiClient = Objects.requireNonNull(genaiClient);
         this.objectMapper = Objects.requireNonNull(objectMapper);
         this.model = Objects.requireNonNull(model);

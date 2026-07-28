@@ -53,9 +53,9 @@ public class PdfReportAdapter implements RenderReportPdfPort {
     public void initPlaywright() {
         log.info("Inicializando motor Playwright y asegurando binarios Chromium en caché...");
         try (Playwright playwright = Playwright.create()) {
-            log.info("Playwright inicializado y listo para renderizar PDFs.");
+            log.info(LogMessage.PLAYWRIGHT_INIT_SUCCESS);
         } catch (Exception ex) {
-            log.error("Error al inicializar Playwright en el arranque", ex);
+            log.error(LogMessage.PLAYWRIGHT_INIT_ERROR, ex);
         }
     }
 

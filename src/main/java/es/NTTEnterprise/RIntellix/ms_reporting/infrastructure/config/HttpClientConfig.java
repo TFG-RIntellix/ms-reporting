@@ -1,5 +1,8 @@
 package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.config;
 
+import com.google.genai.Client;
+import com.google.genai.types.HttpOptions;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,12 +50,12 @@ public class HttpClientConfig {
      * @return the Client instance
      */
     @Bean(GEMINI_CLIENT)
-    public com.google.genai.Client geminiClient(
+    public Client geminiClient(
             @Value("${gemini.api-key}") final String apiKey,
             @Value("${gemini.base-url}") final String baseUrl) {
-        return com.google.genai.Client.builder()
+        return Client.builder()
                 .apiKey(apiKey)
-                .httpOptions(com.google.genai.types.HttpOptions.builder()
+                .httpOptions(HttpOptions.builder()
                         .baseUrl(baseUrl)
                         .build())
                 .build();

@@ -18,7 +18,7 @@ import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
-import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.util.backoff.FixedBackOff;
@@ -86,16 +86,16 @@ public class KafkaConsumerConfig {
 
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configProps.put(JacksonJsonDeserializer.VALUE_DEFAULT_TYPE, ScoringResultMessageDTO.class.getName());
-        configProps.put(JacksonJsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-        configProps.put(JacksonJsonDeserializer.TRUSTED_PACKAGES, TRUSTED_PACKAGES_ALL);
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, ScoringResultMessageDTO.class.getName());
+        configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, TRUSTED_PACKAGES_ALL);
         configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, AUTO_OFFSET_RESET_EARLIEST);
         configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         configProps.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
         configProps.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, SESSION_TIMEOUT_MS);
 
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JacksonJsonDeserializer.class.getName());
+        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
         configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class.getName());
 
         configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);

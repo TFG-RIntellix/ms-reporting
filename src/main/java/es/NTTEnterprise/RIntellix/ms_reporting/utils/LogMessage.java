@@ -65,10 +65,19 @@ public final class LogMessage {
             "Failed to render report PDF";
     public static final String PDF_WRITE_WARN =
             "Failed to write report PDF to {}; storing report without file_path";
+            
+    public static final String PLAYWRIGHT_INIT_START = "Inicializando motor Playwright y asegurando binarios Chromium en caché...";
+    public static final String PLAYWRIGHT_INIT_SUCCESS = "Playwright inicializado y listo para renderizar PDFs.";
+    public static final String PLAYWRIGHT_INIT_ERROR = "Error al inicializar Playwright en el arranque";
 
     // Report store adapter
     public static final String REPORT_POST_START =
             "Persisting report through ms-core-data for requestId={}";
     public static final String REPORT_POST_ERROR =
             "Failed to persist report through ms-core-data for requestId=%s (status=%s)";
+
+    // Exception handling
+    public static final String EXCEPTION_ILLEGAL_ARGUMENT = "Illegal argument: {}";
+    public static final String EXCEPTION_UNEXPECTED = "Unexpected exception occurred: {}";
+    public static final String API_ERROR_UNEXPECTED_MESSAGE = "An unexpected error occurred. Please try again later.";
 }
