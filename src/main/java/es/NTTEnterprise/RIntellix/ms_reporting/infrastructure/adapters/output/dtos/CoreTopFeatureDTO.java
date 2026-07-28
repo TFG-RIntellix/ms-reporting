@@ -9,7 +9,7 @@ import lombok.Setter;
  * Mirror of ms-core-data's TopFeatureDTO (SHAP explainability).
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

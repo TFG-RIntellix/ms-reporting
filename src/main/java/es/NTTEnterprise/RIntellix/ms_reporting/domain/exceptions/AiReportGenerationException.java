@@ -4,7 +4,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions;
  * Raised when the AI model fails to generate the report content.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public class AiReportGenerationException extends RuntimeException {
 

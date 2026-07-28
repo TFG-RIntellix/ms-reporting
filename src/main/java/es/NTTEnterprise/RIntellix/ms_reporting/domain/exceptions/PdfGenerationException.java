@@ -4,7 +4,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions;
  * Raised when the PDF rendering of a report fails.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public class PdfGenerationException extends RuntimeException {
 

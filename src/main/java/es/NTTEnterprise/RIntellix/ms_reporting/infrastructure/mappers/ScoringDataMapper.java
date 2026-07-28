@@ -14,7 +14,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.utils.ReportConstants;
  * entity, enriching it with the resolved partyId and partyName.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public final class ScoringDataMapper {
 

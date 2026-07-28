@@ -11,7 +11,7 @@ import lombok.Setter;
  * A single risk factor identified by the AI analyst in the risk report.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

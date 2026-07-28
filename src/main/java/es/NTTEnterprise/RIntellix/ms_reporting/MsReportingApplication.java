@@ -11,7 +11,7 @@ import org.springframework.retry.annotation.EnableRetry;
  * PDF and persists the report document through ms-core-data.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @SpringBootApplication
 @EnableRetry

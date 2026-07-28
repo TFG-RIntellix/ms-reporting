@@ -7,7 +7,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.Report;
  * Output port to render a report into a PDF binary.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public interface RenderReportPdfPort {
 

@@ -9,7 +9,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.domain.entities;
  *                  storage target is configured
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public record RenderedPdf(byte[] content, int sizeBytes, String filePath) {
 }

@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  * and persisted; failures are retried by the configured error handler.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Slf4j
 @Component

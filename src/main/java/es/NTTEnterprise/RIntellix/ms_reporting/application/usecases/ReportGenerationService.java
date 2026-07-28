@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * </ol>
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Slf4j
 public class ReportGenerationService implements ReportGenerationPortService {

@@ -7,7 +7,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.ScoringData;
  * ms-core-data for a given request.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public interface FetchScoringPort {
 

@@ -6,7 +6,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.Report;
  * Input port for the report generation use case.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public interface ReportGenerationPortService {
 

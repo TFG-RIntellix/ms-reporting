@@ -6,7 +6,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.utils;
  * values.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public final class ReportConstants {
 

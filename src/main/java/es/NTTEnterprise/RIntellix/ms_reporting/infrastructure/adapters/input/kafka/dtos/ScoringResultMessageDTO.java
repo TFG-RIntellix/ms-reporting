@@ -15,7 +15,7 @@ import lombok.Setter;
  * of the message are ignored.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

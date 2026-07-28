@@ -16,7 +16,7 @@ import lombok.Setter;
  * analyst to build the report.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

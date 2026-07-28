@@ -6,7 +6,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.utils;
  * to ensure uniform logging across all layers of the application.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public final class LogMessage {
 

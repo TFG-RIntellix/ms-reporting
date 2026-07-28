@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * Encapsulates error details returned to the client when exceptions occur.
  *
  * @author Lucía Fernández Mancebo
- * @Date 07-28-2026
+ * @date 28/07/2026
  */
 @Data
 @Builder

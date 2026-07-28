@@ -4,7 +4,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions;
  * Raised when persisting the report through ms-core-data fails.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public class ReportPersistenceException extends RuntimeException {
 

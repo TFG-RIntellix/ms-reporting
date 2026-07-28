@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * retried.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Slf4j
 @Component

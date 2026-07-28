@@ -9,7 +9,7 @@ package es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions;
  * be retrieved.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public class ScoringNotAvailableException extends RuntimeException {
 

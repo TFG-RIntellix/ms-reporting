@@ -14,7 +14,7 @@ import lombok.Getter;
  * follow the reports collection schema (snake_case).
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Builder

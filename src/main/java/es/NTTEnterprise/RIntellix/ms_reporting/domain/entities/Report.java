@@ -17,7 +17,7 @@ import lombok.Setter;
  * fileSizeBytes always reflects the size of the rendered PDF.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

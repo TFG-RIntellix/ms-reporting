@@ -16,7 +16,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.utils.LogMessage;
  * into a standardized ApiErrorResponse payload.
  *
  * @author Lucía Fernández Mancebo
- * @Date 07-28-2026
+ * @date 28/07/2026
  */
 @Slf4j
 @RestControllerAdvice

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Maps the Gemini JSON response payload to the domain {@link AiReportContent} aggregate.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public final class GeminiReportMapper {
 

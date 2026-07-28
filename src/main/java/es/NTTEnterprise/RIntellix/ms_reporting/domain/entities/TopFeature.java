@@ -10,7 +10,7 @@ import lombok.Setter;
  * A SHAP top contributing feature of the scoring, used as part of the AI input.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

@@ -6,7 +6,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.Report;
  * Output port to persist the report document through ms-core-data.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public interface StoreReportPort {
 

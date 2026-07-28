@@ -8,7 +8,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.ScoringData;
  * model acting as a financial risk analyst.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public interface GenerateAiReportPort {
 

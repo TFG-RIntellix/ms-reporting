@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
  * ms-core-data and the Gemini API.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Configuration
 public class HttpClientConfig {

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * adapters, keeping the application layer free of Spring annotations.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Configuration
 public class ApplicationServicesConfig {

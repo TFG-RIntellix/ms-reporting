@@ -13,7 +13,7 @@ import lombok.Setter;
  * {@code GET /api/requests/{requestId}/scoring} endpoint (ScoringDTO).
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 @Getter
 @Setter

@@ -15,7 +15,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.utils.LogMessage;
  * force structured output.
  * 
  * @author Lucía Fernández Mancebo
- * @Date 29-06-2026
+ * @date 29/06/2026
  */
 public final class GeminiPromptFactory {
 
