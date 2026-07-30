@@ -67,4 +67,20 @@ class GeminiReportMapperTest {
         AiReportContent content = GeminiReportMapper.toDomain(payload);
         assertEquals(Severity.MEDIO, content.getRiskFactors().get(0).getSeverity());
     }
+
+    @Test
+    @DisplayName("Should handle missing inputs gracefully")
+    void toDomain_missingInputs() {
+        var payload = new GeminiReportMapper.GeminiReportPayload(
+            null, null, null, null, null
+        );
+
+        AiReportContent content = GeminiReportMapper.toDomain(payload);
+        
+        assertNull(content.getTitle());
+        assertNull(content.getAiSummary());
+        assertNull(content.getRiskAnalysis());
+        assertTrue(content.getRiskFactors().isEmpty());
+        assertTrue(content.getRecommendations().isEmpty());
+    }
 }

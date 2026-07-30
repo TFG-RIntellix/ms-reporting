@@ -62,11 +62,11 @@
             </div>
             <div class="text-right shrink-0">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-full shadow-lg"
-                     th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red-600' : 'bg-emerald-600'}">
+                     th:classappend="${#strings.contains('AB', dto.grade) ? 'bg-emerald-600' : (#strings.contains('CD', dto.grade) ? 'bg-amber-500' : 'bg-red-600')}">
                     <span class="text-white font-bold text-4xl font-serif" th:text="${dto.grade}">A</span>
                 </div>
                 <p class="text-blue-200/80 text-[10px] tracking-widest uppercase mt-2" 
-                   th:text="${#strings.equals(dto.grade, 'D') ? 'Riesgo Alto' : 'Riesgo Bajo'}">Riesgo Bajo</p>
+                   th:text="${#strings.contains('AB', dto.grade) ? 'Riesgo Bajo' : (#strings.contains('CD', dto.grade) ? 'Riesgo Medio' : 'Riesgo Alto')}">Riesgo Bajo</p>
             </div>
         </div>
 
@@ -98,19 +98,19 @@
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
                 </div>
                 <div class="grid grid-cols-4 gap-4">
-                    <div th:each="kpi : ${dto.kpis}" class="border rounded-xl px-4 py-4 bg-white transition-shadow" th:classappend="${#strings.equals(dto.grade, 'D') ? 'border-red-100' : 'border-emerald-100'}">
+                    <div th:each="kpi : ${dto.kpis}" class="border rounded-xl px-4 py-4 bg-white transition-shadow" th:classappend="${#strings.contains('AB', dto.grade) ? 'border-emerald-100' : (#strings.contains('CD', dto.grade) ? 'border-amber-100' : 'border-red-100')}">
                         <p class="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-2 leading-tight" th:text="${kpi.label}">Label</p>
-                        <p class="text-xl font-bold font-serif" th:classappend="${#strings.equals(dto.grade, 'D') ? 'text-red-700' : 'text-emerald-700'}" th:text="${kpi.value}">Value</p>
+                        <p class="text-xl font-bold font-serif" th:classappend="${#strings.contains('AB', dto.grade) ? 'text-emerald-700' : (#strings.contains('CD', dto.grade) ? 'text-amber-700' : 'text-red-700')}" th:text="${kpi.value}">Value</p>
                     </div>
                 </div>
             </section>
 
             <!-- Decision Banner -->
-            <div class="border rounded-lg px-6 py-4 flex items-center gap-4 mt-10" th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}">
-                <div class="w-2 h-12 rounded-full" th:classappend="${#strings.equals(dto.grade, 'D') ? 'bg-red-600' : 'bg-emerald-600'}"></div>
+            <div class="border rounded-lg px-6 py-4 flex items-center gap-4 mt-10" th:classappend="${#strings.contains('AB', dto.grade) ? 'bg-emerald-50 border-emerald-200' : (#strings.contains('CD', dto.grade) ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200')}">
+                <div class="w-2 h-12 rounded-full" th:classappend="${#strings.contains('AB', dto.grade) ? 'bg-emerald-600' : (#strings.contains('CD', dto.grade) ? 'bg-amber-500' : 'bg-red-600')}"></div>
                 <div>
                     <p class="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Decisión Recomendada</p>
-                    <p class="text-xl font-bold tracking-widest font-serif" th:classappend="${#strings.equals(dto.grade, 'D') ? 'text-red-700' : 'text-emerald-700'}" th:text="${dto.decision}">APROBAR</p>
+                    <p class="text-xl font-bold tracking-widest font-serif" th:classappend="${#strings.contains('AB', dto.grade) ? 'text-emerald-700' : (#strings.contains('CD', dto.grade) ? 'text-amber-700' : 'text-red-700')}" th:text="${dto.decision}">APROBAR</p>
                 </div>
             </div>
 
@@ -120,7 +120,7 @@
                     <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Resumen Ejecutivo</h2>
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
                 </div>
-                <p class="text-sm leading-relaxed text-foreground/80 bg-muted/40 rounded-lg px-5 py-4 border-l-4 border-[#c8a96e]" th:text="${report.aiSummary}">
+                <p class="text-sm leading-relaxed text-foreground/80 bg-muted/40 rounded-lg px-5 py-4 border-l-4 border-[#c8a96e] whitespace-pre-wrap text-justify" th:text="${report.aiSummary}">
                     Summary text...
                 </p>
             </section>
@@ -171,7 +171,7 @@
                                     <!-- Static SVG gauge -->
                                     <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
                                         <circle cx="60" cy="60" r="50" fill="none" stroke="#f0ede8" stroke-width="12"></circle>
-                                        <circle cx="60" cy="60" r="50" fill="none" th:stroke="${#strings.equals(dto.grade, 'D') ? '#ef4444' : '#10b981'}" stroke-width="12" th:stroke-dasharray="${dto.dtiDasharray} + ' 314'" stroke-linecap="round"></circle>
+                                        <circle cx="60" cy="60" r="50" fill="none" th:stroke="${#strings.contains('AB', dto.grade) ? '#10b981' : (#strings.contains('CD', dto.grade) ? '#f59e0b' : '#ef4444')}" stroke-width="12" th:stroke-dasharray="${dto.dtiDasharray} + ' 314'" stroke-linecap="round"></circle>
                                     </svg>
                                     <div class="absolute inset-0 flex flex-col items-center justify-center">
                                         <span class="text-xl font-bold text-foreground font-serif" th:text="${dto.dti}">16%</span>
@@ -194,7 +194,7 @@
                     <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
                 </div>
                 <div class="space-y-4">
-                    <p class="text-sm leading-relaxed text-foreground/80" th:text="${report.riskAnalysis}">Analysis</p>
+                    <p class="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap text-justify" th:text="${report.riskAnalysis}">Analysis</p>
                 </div>
             </section>
 
@@ -223,7 +223,7 @@
                                         <span th:text="${factor.severity != null ? factor.severity : 'BAJO'}">BAJO</span>
                                     </span>
                                 </td>
-                                <td class="px-5 py-4 text-xs text-muted-foreground leading-relaxed" th:text="${factor.description}">Description</td>
+                                <td class="px-5 py-4 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap text-justify" th:text="${factor.description}">Description</td>
                             </tr>
                         </tbody>
                     </table>
@@ -239,7 +239,7 @@
                 <div class="space-y-3">
                     <div th:each="rec, i : ${report.recommendations}" class="flex gap-3 items-start">
                         <span class="shrink-0 w-6 h-6 rounded-full bg-[#0f1c3f] text-[#c8a96e] text-[11px] font-bold flex items-center justify-center mt-0.5 font-serif" th:text="${i.count}">1</span>
-                        <p class="text-sm text-foreground/80 leading-relaxed" th:text="${rec}">Rec text</p>
+                        <p class="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap text-justify" th:text="${rec}">Rec text</p>
                     </div>
                 </div>
             </section>

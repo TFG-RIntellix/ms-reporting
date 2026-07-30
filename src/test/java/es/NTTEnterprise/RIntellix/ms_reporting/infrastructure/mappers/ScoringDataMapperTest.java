@@ -70,4 +70,12 @@ class ScoringDataMapperTest {
         assertNotNull(data.getTopFeatures());
         assertTrue(data.getTopFeatures().isEmpty());
     }
+
+    @Test
+    @DisplayName("Should throw NPE when DTO is null")
+    void toDomain_nullDTO() {
+        assertThrows(NullPointerException.class, () -> {
+            ScoringDataMapper.toDomain(null, "P-1", "Jane");
+        });
+    }
 }

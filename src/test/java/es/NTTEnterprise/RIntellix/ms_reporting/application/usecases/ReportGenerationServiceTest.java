@@ -140,4 +140,24 @@ class ReportGenerationServiceTest {
         verify(renderReportPdfPort, never()).render(any());
         verify(storeReportPort, never()).store(any());
     }
+
+    @Test
+    void shouldPropagateAiReportGenerationException() {
+        final ScoringData scoringData = ScoringData.builder()
+                .scoringId(SCORING_ID)
+                .requestId(REQUEST_ID)
+                .partyId(PARTY_ID)
+                .build();
+
+        when(fetchScoringPort.fetchScoringData(REQUEST_ID)).thenReturn(scoringData);
+        when(generateAiReportPort.generateReport(scoringData))
+                .thenThrow(new RuntimeException("Gemini API Timeout"));
+
+        assertThatThrownBy(() -> service.generateReport(REQUEST_ID))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Gemini API Timeout");
+
+        verify(renderReportPdfPort, never()).render(any());
+        verify(storeReportPort, never()).store(any());
+    }
 }

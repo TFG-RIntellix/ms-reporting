@@ -66,4 +66,40 @@ class PdfReportAdapterTest {
                 .language("es")
                 .build();
     }
+
+    @Test
+    void shouldThrowWhenTemplateEngineFails() {
+        final TemplateEngine templateEngine = Mockito.mock(TemplateEngine.class);
+        Mockito.when(templateEngine.process(
+                Mockito.eq("credit_report"),
+                Mockito.any(Context.class)))
+            .thenThrow(new RuntimeException("Template error"));
+
+        final PdfReportAdapter adapter = new PdfReportAdapter("", templateEngine);
+        final Report report = sampleReport();
+
+        org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class, () -> {
+            adapter.render(report);
+        }, "Template error");
+    }
+
+    @Test
+    void shouldThrowPdfGenerationExceptionWhenPlaywrightFails() {
+        final TemplateEngine templateEngine = Mockito.mock(TemplateEngine.class);
+        Mockito.when(templateEngine.process(
+                Mockito.eq("credit_report"),
+                Mockito.any(Context.class)))
+            .thenReturn("<html></html>");
+
+        final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine));
+        Mockito.doThrow(new es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions.PdfGenerationException("PDF_RENDER_ERROR", new RuntimeException()))
+                .when(adapter).generatePdf(Mockito.anyString());
+        
+        final Report report = sampleReport();
+
+        org.junit.jupiter.api.Assertions.assertThrows(
+            es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions.PdfGenerationException.class, 
+            () -> adapter.render(report)
+        );
+    }
 }

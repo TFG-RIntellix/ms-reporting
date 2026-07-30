@@ -27,6 +27,8 @@ public final class LogMessage {
             "Report generated and message acknowledged for requestId={}";
     public static final String KAFKA_CONSUMER_ERROR = 
             "Error processing persistScoring message at offset {}: {}";
+    public static final String KAFKA_MAX_RETRIES_REACHED =
+            "ERROR: Max retries reached para reporte (offset: {}). Confirmando el mensaje (ACK) explícitamente para evitar bucle infinito.";
 
     // Report generation service
     public static final String REPORT_GENERATION_START =

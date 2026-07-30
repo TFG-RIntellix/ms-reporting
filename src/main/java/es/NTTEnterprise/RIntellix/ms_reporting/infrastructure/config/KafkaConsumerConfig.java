@@ -163,10 +163,14 @@ public class KafkaConsumerConfig {
 
         final FixedBackOff backoff = new FixedBackOff(initialDelayMs, maxRetryAttempts);
 
-        final DefaultErrorHandler errorHandler = new DefaultErrorHandler((consumerRecord, exception) ->
-                log.error(LogMessage.KAFKA_CONSUMER_ERROR,
-                        consumerRecord.offset(), exception.getMessage(), exception), backoff);
+        final DefaultErrorHandler errorHandler = new DefaultErrorHandler((consumerRecord, exception) -> {
+            log.error(LogMessage.KAFKA_CONSUMER_ERROR,
+                    consumerRecord.offset(), exception.getMessage(), exception);
+            log.error(LogMessage.KAFKA_MAX_RETRIES_REACHED, consumerRecord.offset());
+        }, backoff);
 
+        // Ensure that the message offset is committed once max retries are exhausted to break the loop
+        errorHandler.setCommitRecovered(true);
         errorHandler.addNotRetryableExceptions(MethodArgumentNotValidException.class);
         return errorHandler;
     }
