@@ -47,7 +47,7 @@ public class KafkaConsumerConfig {
 
     private static final String AUTO_OFFSET_RESET_EARLIEST = "earliest";
     private static final String TRUSTED_PACKAGES_ALL = "*";
-    private static final int MAX_POLL_RECORDS = 100;
+    private static final int MAX_POLL_RECORDS = 1;
     private static final int SESSION_TIMEOUT_MS = 30000;
     private static final int SINGLE_CONSUMER_CONCURRENCY = 1;
 
