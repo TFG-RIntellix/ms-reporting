@@ -1,3 +1,14 @@
+# Maven
+target/
+
+# Application configuration (holds secrets, provided per-environment)
+application.yaml*
+application.properties*
+compose.yaml*
+
+# Generated report PDFs
+reports/
+
 # Compiled class file
 *.class
 
