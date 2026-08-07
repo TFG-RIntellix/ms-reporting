@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Informe de Calificación Crediticia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#edeae3",
+                        foreground: "#0f1c3f",
+                        card: "#ffffff",
+                        border: "#e2e8f0",
+                        muted: {
+                            DEFAULT: "#f1f5f9",
+                            foreground: "#64748b"
+                        },
+                        secondary: {
+                            DEFAULT: "#f8fafc"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['DM Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* PDF specific styles */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            background-color: #edeae3;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    </style>
+</head>
+<body class="py-8 px-4 font-sans text-foreground" style="background-color: #edeae3;">
+    <div class="max-w-[900px] mx-auto bg-card shadow-2xl rounded-sm overflow-hidden border border-border/30">
+        <!-- Header Bar -->
+        <div class="bg-[#0f1c3f] px-10 py-6 flex items-start justify-between gap-6">
+            <div>
+                <p class="text-[#c8a96e] text-[10px] tracking-[0.25em] font-semibold uppercase mb-1">
+                    Análisis de Riesgo de Crédito
+                </p>
+                <h1 class="text-white text-2xl font-bold leading-tight font-serif" th:text="${report.title != null ? report.title : 'Informe de Calificación Crediticia'}">
+                    Informe de Calificación Crediticia
+                </h1>
+                <p class="text-blue-200/60 text-xs mt-2 font-mono">
+                    Solicitud ID: <span th:text="${report.requestId}"></span>
+                </p>
+            </div>
+            <div class="text-right shrink-0">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full shadow-lg"
+                     th:classappend="${#strings.contains('AB', dto.grade) ? 'bg-emerald-600' : (#strings.contains('CD', dto.grade) ? 'bg-amber-500' : 'bg-red-600')}">
+                    <span class="text-white font-bold text-4xl font-serif" th:text="${dto.grade}">A</span>
+                </div>
+                <p class="text-blue-200/80 text-[10px] tracking-widest uppercase mt-2" 
+                   th:text="${#strings.contains('AB', dto.grade) ? 'Riesgo Bajo' : (#strings.contains('CD', dto.grade) ? 'Riesgo Medio' : 'Riesgo Alto')}">Riesgo Bajo</p>
+            </div>
+        </div>
+
+        <!-- Meta Strip -->
+        <div class="bg-[#182347] px-10 py-3 flex flex-wrap gap-x-8 gap-y-1">
+            <span class="text-[10px] text-blue-200/50 font-mono">
+                <span class="text-blue-200/30 uppercase tracking-wider">Scoring ID: </span>
+                <span th:text="${report.scoringId}"></span>
+            </span>
+            <span class="text-[10px] text-blue-200/50 font-mono">
+                <span class="text-blue-200/30 uppercase tracking-wider">Modelo IA: </span>
+                <span th:text="${report.modelVersion}"></span>
+            </span>
+            <span class="text-[10px] text-blue-200/50 font-mono">
+                <span class="text-blue-200/30 uppercase tracking-wider">Tipología: </span>
+                <span th:text="${dto.loanType}">Hipotecario</span>
+            </span>
+            <span class="text-[10px] text-blue-200/50 font-mono">
+                <span class="text-blue-200/30 uppercase tracking-wider">Fecha: </span>
+                <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span>
+            </span>
+        </div>
+
+        <div class="px-10 py-8">
+            <!-- KPI Cards -->
+            <section>
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Métricas Clave de Riesgo</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <div class="grid grid-cols-4 gap-4">
+                    <div th:each="kpi : ${dto.kpis}" class="border rounded-xl px-4 py-4 bg-white transition-shadow" th:classappend="${#strings.contains('AB', dto.grade) ? 'border-emerald-100' : (#strings.contains('CD', dto.grade) ? 'border-amber-100' : 'border-red-100')}">
+                        <p class="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-2 leading-tight" th:text="${kpi.label}">Label</p>
+                        <p class="text-xl font-bold font-serif" th:classappend="${#strings.contains('AB', dto.grade) ? 'text-emerald-700' : (#strings.contains('CD', dto.grade) ? 'text-amber-700' : 'text-red-700')}" th:text="${kpi.value}">Value</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Decision Banner -->
+            <div class="border rounded-lg px-6 py-4 flex items-center gap-4 mt-10" th:classappend="${#strings.contains('AB', dto.grade) ? 'bg-emerald-50 border-emerald-200' : (#strings.contains('CD', dto.grade) ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200')}">
+                <div class="w-2 h-12 rounded-full" th:classappend="${#strings.contains('AB', dto.grade) ? 'bg-emerald-600' : (#strings.contains('CD', dto.grade) ? 'bg-amber-500' : 'bg-red-600')}"></div>
+                <div>
+                    <p class="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Decisión Recomendada</p>
+                    <p class="text-xl font-bold tracking-widest font-serif" th:classappend="${#strings.contains('AB', dto.grade) ? 'text-emerald-700' : (#strings.contains('CD', dto.grade) ? 'text-amber-700' : 'text-red-700')}" th:text="${dto.decision}">APROBAR</p>
+                </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <section class="pt-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Resumen Ejecutivo</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <p class="text-sm leading-relaxed text-foreground/80 bg-muted/40 rounded-lg px-5 py-4 border-l-4 border-[#c8a96e] whitespace-pre-wrap text-justify" th:text="${report.aiSummary}">
+                    Summary text...
+                </p>
+            </section>
+
+            <!-- Financial Profile -->
+            <section class="pt-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Perfil Financiero del Solicitante</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <div class="grid grid-cols-4 gap-3">
+                    <div th:each="fin : ${dto.financials}" class="bg-secondary/60 rounded-lg px-4 py-3 border border-border">
+                        <p class="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-semibold mb-1" th:text="${fin.label}">Label</p>
+                        <p class="text-sm font-bold text-foreground" th:text="${fin.value}">Value</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Row (Simplified HTML/Tailwind version of Recharts) -->
+            <section class="break-inside-avoid pt-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Análisis Visual</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- SHAP Bars -->
+                    <div class="bg-white border border-border rounded-xl p-5">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-4">Factores SHAP — Impacto en el Riesgo</p>
+                        <div class="space-y-3">
+                            <div th:each="shap : ${dto.shapFactors}" class="flex items-center gap-3">
+                                <div class="w-32 text-[10px] font-sans text-[#0f1c3f] truncate" th:text="${shap.name}">Name</div>
+                                <!-- Background track -->
+                                <div class="flex-1 h-4 bg-muted relative rounded">
+                                    <!-- Bar -->
+                                    <div class="absolute top-0 bottom-0 left-0 rounded" th:style="'width: ' + ${shap.widthPct} + '%;'" th:classappend="${shap.direction == 'reduce' ? 'bg-emerald-500' : 'bg-red-500'}"></div>
+                                </div>
+                                <div class="w-8 text-right text-[10px] font-mono text-muted-foreground" th:text="${shap.shap}">0.0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DTI Gauge -->
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-white border border-border rounded-xl p-5 flex-1">
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-3">Ratio DTI — Nivel de Endeudamiento</p>
+                            <div class="flex items-center gap-4">
+                                <div class="relative w-28 h-28 shrink-0">
+                                    <!-- Static SVG gauge -->
+                                    <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                                        <circle cx="60" cy="60" r="50" fill="none" stroke="#f0ede8" stroke-width="12"></circle>
+                                        <circle cx="60" cy="60" r="50" fill="none" th:stroke="${#strings.contains('AB', dto.grade) ? '#10b981' : (#strings.contains('CD', dto.grade) ? '#f59e0b' : '#ef4444')}" stroke-width="12" th:stroke-dasharray="${dto.dtiDasharray} + ' 314'" stroke-linecap="round"></circle>
+                                    </svg>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span class="text-xl font-bold text-foreground font-serif" th:text="${dto.dti}">16%</span>
+                                        <span class="text-[9px] text-muted-foreground uppercase tracking-wider">DTI</span>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-muted-foreground leading-relaxed" th:text="${dto.dtiText}">
+                                    Text
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risk Analysis -->
+            <section class="pt-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Análisis de Riesgo</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap text-justify" th:text="${report.riskAnalysis}">Analysis</p>
+                </div>
+            </section>
+
+            <!-- Risk Factors Table -->
+            <section class="break-inside-avoid pt-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Factores de Riesgo Identificados</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <div class="overflow-hidden border border-border rounded-xl">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-[#0f1c3f]">
+                                <th class="text-left px-5 py-3 text-[10px] uppercase tracking-[0.2em] text-blue-200/70 font-semibold w-52">Factor</th>
+                                <th class="text-left px-4 py-3 text-[10px] uppercase tracking-[0.2em] text-blue-200/70 font-semibold w-24">Severidad</th>
+                                <th class="text-left px-5 py-3 text-[10px] uppercase tracking-[0.2em] text-blue-200/70 font-semibold">Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="factor, i : ${report.riskFactors}" class="border-t border-border transition-colors hover:bg-secondary/40" th:classappend="${i.even ? 'bg-white' : 'bg-muted/30'}">
+                                <td class="px-5 py-4 font-semibold text-foreground text-xs" th:text="${factor.factor}">Factor Name</td>
+                                <td class="px-4 py-4">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide"
+                                          th:classappend="${factor.severity != null and factor.severity.name() == 'ALTO' ? 'bg-red-100 text-red-800' : (factor.severity != null and factor.severity.name() == 'MEDIO' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800')}">
+                                        <span class="w-1.5 h-1.5 rounded-full" th:classappend="${factor.severity != null and factor.severity.name() == 'ALTO' ? 'bg-red-500' : (factor.severity != null and factor.severity.name() == 'MEDIO' ? 'bg-amber-500' : 'bg-emerald-500')}"></span>
+                                        <span th:text="${factor.severity != null ? factor.severity : 'BAJO'}">BAJO</span>
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap text-justify" th:text="${factor.description}">Description</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Recommendations -->
+            <section class="break-inside-avoid pt-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-[11px] uppercase tracking-[0.25em] font-bold text-[#0f1c3f] font-sans">Recomendaciones</h2>
+                    <div class="flex-1 h-px bg-gradient-to-r from-[#c8a96e]/40 to-transparent"></div>
+                </div>
+                <div class="space-y-3">
+                    <div th:each="rec, i : ${report.recommendations}" class="flex gap-3 items-start">
+                        <span class="shrink-0 w-6 h-6 rounded-full bg-[#0f1c3f] text-[#c8a96e] text-[11px] font-bold flex items-center justify-center mt-0.5 font-serif" th:text="${i.count}">1</span>
+                        <p class="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap text-justify" th:text="${rec}">Rec text</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <div class="border-t border-border pt-6 mt-10 flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+                <div>
+                    <span class="text-[#c8a96e] font-semibold">Modelo IA:</span> <span th:text="${report.modelVersion}"></span> &nbsp;|&nbsp;
+                    <span class="text-[#c8a96e] font-semibold">Scoring:</span> <span th:text="${report.scoringId}"></span>
+                </div>
+                <div class="font-sans">
+                    Generado el <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
