@@ -2,8 +2,6 @@
 target/
 
 # Application configuration (holds secrets, provided per-environment)
-application.yaml*
-application.properties*
 compose.yaml*
 
 # Generated report PDFs
@@ -33,3 +31,4 @@ reports/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
