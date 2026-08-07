@@ -59,8 +59,41 @@ class GeminiReportAdapterTest {
                 assertEquals(MODEL, adapter.getModelName());
         }
 
-        // ========== generateReport() — serialization failure ==========
+        // ========== generateReport() — success ==========
 
+        @Test
+        @DisplayName("Should successfully generate report and map it to domain")
+        void generateReport_success() throws Exception {
+                ScoringData scoringData = ScoringData.builder()
+                                .scoringId("SCO-1")
+                                .requestId("REQ-1")
+                                .partyId("P-1")
+                                .build();
+
+                String fakeJsonResponse = "{\"summary\":\"Test summary\",\"risk_factors\":[],\"recommendations\":[]}";
+                
+                when(objectMapper.writeValueAsString(scoringData))
+                                .thenReturn("{\"scoringId\":\"SCO-1\"}");
+
+                GenerateContentResponse mockResponse = mock(GenerateContentResponse.class);
+                when(mockResponse.text()).thenReturn(fakeJsonResponse);
+                when(models.generateContent(eq(MODEL), any(Content.class), any(GenerateContentConfig.class)))
+                                .thenReturn(mockResponse);
+
+                es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper.GeminiReportPayload fakePayload = 
+                        new es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper.GeminiReportPayload(
+                                "Test title", "Test summary", "Test analysis", java.util.List.of(), java.util.List.of());
+                
+                when(objectMapper.readValue(eq(fakeJsonResponse), eq(es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper.GeminiReportPayload.class)))
+                                .thenReturn(fakePayload);
+
+                es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.AiReportContent result = adapter.generateReport(scoringData);
+
+                assertNotNull(result);
+                assertEquals("Test summary", result.getAiSummary());
+        }
+
+        // ========== generateReport() — serialization failure ==========
         @Test
         @DisplayName("Should throw AiReportGenerationException when scoring serialization fails")
         void generateReport_serializationFails_throwsException() throws JsonProcessingException {
