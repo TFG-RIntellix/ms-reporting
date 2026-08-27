@@ -49,10 +49,10 @@ class PdfViewModelMapperTest {
         data.setInputFeatures(Map.of(
                 "loanType", "HIPOTECA",
                 "purpose", "COMPRA_VIVIENDA",
-                "annual_income", 60000.0,
-                "requested_amount", 150000.0,
-                "interest_rate", 0.035,
-                "term_months", 360,
+                "annualIncome", 60000.0,
+                "loanAmount", 150000.0,
+                "interestRate", 0.035,
+                "termMonths", 360,
                 "ltv", 0.80));
 
         Report report = new Report();

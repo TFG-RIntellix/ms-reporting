@@ -68,12 +68,12 @@ public class PdfViewModelMapper {
         Double ltv = 0.0;
 
         if (data.getInputFeatures() != null) {
-            annualIncome = parseDoubleStrict(data.getInputFeatures().get("annual_income"));
-            loanAmount = parseDoubleStrict(data.getInputFeatures().get("requested_amount") != null
-                    ? data.getInputFeatures().get("requested_amount")
-                    : data.getInputFeatures().get("requested_limit"));
-            interestRate = parseDoubleStrict(data.getInputFeatures().get("interest_rate"));
-            Object termObj = data.getInputFeatures().get("term_months");
+            annualIncome = parseDoubleStrict(data.getInputFeatures().get("annualIncome"));
+            loanAmount = parseDoubleStrict(data.getInputFeatures().get("loanAmount") != null
+                    ? data.getInputFeatures().get("loanAmount")
+                    : data.getInputFeatures().get("creditLimit"));
+            interestRate = parseDoubleStrict(data.getInputFeatures().get("interestRate"));
+            Object termObj = data.getInputFeatures().get("termMonths");
             termMonths = termObj instanceof Number ? ((Number) termObj).intValue() : 0;
             ltv = parseDoubleStrict(data.getInputFeatures().get("ltv"));
         }
