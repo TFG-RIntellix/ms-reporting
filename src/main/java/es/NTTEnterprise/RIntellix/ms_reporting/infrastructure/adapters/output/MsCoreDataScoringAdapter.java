@@ -47,7 +47,7 @@ public class MsCoreDataScoringAdapter implements FetchScoringPort {
     }
 
     @Override
-    @Retryable(value = ScoringNotAvailableException.class, maxAttempts = 5, backoff = @Backoff(delay = 1000, multiplier = 2))
+    @Retryable(retryFor = ScoringNotAvailableException.class, maxAttempts = 5, backoff = @Backoff(delay = 1000, multiplier = 2))
     public ScoringData fetchScoringData(final String requestId) {
         log.info(LogMessage.SCORING_FETCH_START, requestId);
 

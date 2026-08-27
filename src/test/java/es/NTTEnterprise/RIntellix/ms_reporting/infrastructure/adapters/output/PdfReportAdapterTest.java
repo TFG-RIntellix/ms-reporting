@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.RenderedPdf;
@@ -19,8 +20,19 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.Report;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.RiskFactor;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.enums.ReportType;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.enums.Severity;
+import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.adapters.output.dtos.view.PdfViewModel;
+import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.PdfViewModelMapper;
 
 class PdfReportAdapterTest {
+
+    private PdfViewModelMapper pdfViewModelMapper;
+
+    @BeforeEach
+    void setUp() {
+        pdfViewModelMapper = Mockito.mock(PdfViewModelMapper.class);
+        Mockito.when(pdfViewModelMapper.toViewModel(Mockito.any(Report.class)))
+                .thenReturn(new PdfViewModel("A", "APROBAR", "-", "Test", List.of(), List.of(), "0%", "0", "Test", List.of()));
+    }
 
     @Test
     void shouldRenderNonEmptyPdfWithoutFilePathWhenOutputDirNotConfigured() {
@@ -30,7 +42,7 @@ class PdfReportAdapterTest {
                 Mockito.any(Context.class)))
             .thenReturn("<html><body><h1>Informe de Calificacion</h1></body></html>");
 
-        final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine));
+        final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine, pdfViewModelMapper));
         byte[] fakePdfBytes = "%PDF-1.4 fake".getBytes(StandardCharsets.ISO_8859_1);
         doReturn(fakePdfBytes).when(adapter).generatePdf(Mockito.anyString());
         final Report report = sampleReport();
@@ -75,7 +87,7 @@ class PdfReportAdapterTest {
                 Mockito.any(Context.class)))
             .thenThrow(new RuntimeException("Template error"));
 
-        final PdfReportAdapter adapter = new PdfReportAdapter("", templateEngine);
+        final PdfReportAdapter adapter = new PdfReportAdapter("", templateEngine, pdfViewModelMapper);
         final Report report = sampleReport();
 
         org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class, () -> {
@@ -91,7 +103,7 @@ class PdfReportAdapterTest {
                 Mockito.any(Context.class)))
             .thenReturn("<html></html>");
 
-        final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine));
+        final PdfReportAdapter adapter = spy(new PdfReportAdapter("", templateEngine, pdfViewModelMapper));
         Mockito.doThrow(new es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions.PdfGenerationException("PDF_RENDER_ERROR", new RuntimeException()))
                 .when(adapter).generatePdf(Mockito.anyString());
         
