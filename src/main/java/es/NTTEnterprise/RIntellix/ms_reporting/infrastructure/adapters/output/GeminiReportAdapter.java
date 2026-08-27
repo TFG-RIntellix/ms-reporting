@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Content;
@@ -39,23 +37,23 @@ import lombok.extern.slf4j.Slf4j;
 public class GeminiReportAdapter implements GenerateAiReportPort {
 
     private final Client genaiClient;
-    private final ObjectMapper objectMapper;
+    private final GeminiReportMapper geminiReportMapper;
     private final String model;
 
     /**
      * Constructs a GeminiReportAdapter with required Gen AI client, mapper and
      * config values.
      *
-     * @param genaiClient  the Gen AI SDK client
-     * @param objectMapper the object mapper for serialization
-     * @param model        the model version string
+     * @param genaiClient        the Gen AI SDK client
+     * @param geminiReportMapper the mapper for JSON conversion
+     * @param model              the model version string
      */
     public GeminiReportAdapter(
             @Qualifier(HttpClientConfig.GEMINI_CLIENT) final Client genaiClient,
-            final ObjectMapper objectMapper,
+            final GeminiReportMapper geminiReportMapper,
             @Value("${gemini.model:gemini-3.1-flash-lite}") final String model) {
         this.genaiClient = Objects.requireNonNull(genaiClient);
-        this.objectMapper = Objects.requireNonNull(objectMapper);
+        this.geminiReportMapper = Objects.requireNonNull(geminiReportMapper);
         this.model = Objects.requireNonNull(model);
     }
 
@@ -70,7 +68,7 @@ public class GeminiReportAdapter implements GenerateAiReportPort {
                     String.format(LogMessage.GEMINI_RESPONSE_EMPTY, scoringData.getRequestId()));
         }
 
-        return GeminiReportMapper.toDomain(parsePayload(json));
+        return geminiReportMapper.fromJson(json);
     }
 
     @Override
@@ -86,7 +84,7 @@ public class GeminiReportAdapter implements GenerateAiReportPort {
      */
     private String callGemini(final ScoringData scoringData) {
         try {
-            final String scoringJson = serialize(scoringData);
+            final String scoringJson = geminiReportMapper.toJson(scoringData);
 
             final GenerateContentConfig config = GenerateContentConfig.builder()
                     .systemInstruction(Content.builder()
@@ -109,34 +107,6 @@ public class GeminiReportAdapter implements GenerateAiReportPort {
         } catch (Exception ex) {
             throw new AiReportGenerationException(
                     LogMessage.GEMINI_CALL_ERROR + " (requestId=" + scoringData.getRequestId() + ")", ex);
-        }
-    }
-
-    /**
-     * Serializes scoring data into a JSON string.
-     *
-     * @param scoringData the scoring entity
-     * @return the serialized JSON string
-     */
-    private String serialize(final ScoringData scoringData) {
-        try {
-            return objectMapper.writeValueAsString(scoringData);
-        } catch (JsonProcessingException ex) {
-            throw new AiReportGenerationException(LogMessage.GEMINI_CALL_ERROR, ex);
-        }
-    }
-
-    /**
-     * Parses the response JSON string from Gemini back into a structured payload.
-     *
-     * @param json the raw response string
-     * @return the parsed payload
-     */
-    private GeminiReportMapper.GeminiReportPayload parsePayload(final String json) {
-        try {
-            return objectMapper.readValue(json, GeminiReportMapper.GeminiReportPayload.class);
-        } catch (JsonProcessingException ex) {
-            throw new AiReportGenerationException(LogMessage.GEMINI_PARSE_ERROR, ex);
         }
     }
 }
