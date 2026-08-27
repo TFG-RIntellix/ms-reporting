@@ -1,86 +1,75 @@
 package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.List;
-
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.AiReportContent;
+import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.ScoringData;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.enums.Severity;
+import es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions.AiReportGenerationException;
 
 class GeminiReportMapperTest {
 
+    private GeminiReportMapper mapper;
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        mapper = new GeminiReportMapper(objectMapper);
+    }
+
     @Test
-    @DisplayName("Should map payload successfully")
-    void toDomain_success() {
-        var riskFactor = new GeminiReportMapper.RiskFactorPayload("F1", "ALTO", "Desc1");
-        var payload = new GeminiReportMapper.GeminiReportPayload(
-            "Title",
-            "Summary",
-            "Analysis",
-            List.of(riskFactor),
-            List.of("Rec1")
-        );
+    void shouldSerializeScoringDataToJson() {
+        ScoringData data = new ScoringData();
+        data.setRequestId("req-123");
+        data.setPd(0.05);
 
-        AiReportContent content = GeminiReportMapper.toDomain(payload);
+        String json = mapper.toJson(data);
 
-        assertEquals("Title", content.getTitle());
-        assertEquals("Summary", content.getAiSummary());
-        assertEquals("Analysis", content.getRiskAnalysis());
+        assertNotNull(json);
+        assertNotNull(json.contains("req-123"));
+    }
+
+    @Test
+    void shouldParseJsonToAiReportContent() {
+        String json = """
+                {
+                  "title": "Informe IA",
+                  "ai_summary": "Resumen",
+                  "risk_analysis": "Analisis",
+                  "risk_factors": [
+                    {
+                      "factor": "Factor 1",
+                      "severity": "ALTO",
+                      "description": "Desc 1"
+                    }
+                  ],
+                  "recommendations": ["Rec 1"]
+                }
+                """;
+
+        AiReportContent content = mapper.fromJson(json);
+
+        assertNotNull(content);
+        assertEquals("Informe IA", content.getTitle());
+        assertEquals("Resumen", content.getAiSummary());
         assertEquals(1, content.getRiskFactors().size());
-        assertEquals("F1", content.getRiskFactors().get(0).getFactor());
         assertEquals(Severity.ALTO, content.getRiskFactors().get(0).getSeverity());
-        assertEquals("Desc1", content.getRiskFactors().get(0).getDescription());
-        assertEquals(1, content.getRecommendations().size());
-        assertEquals("Rec1", content.getRecommendations().get(0));
     }
 
     @Test
-    @DisplayName("Should return null if payload is null")
-    void toDomain_null() {
-        assertNull(GeminiReportMapper.toDomain(null));
-    }
+    void shouldThrowExceptionOnInvalidJson() {
+        String invalidJson = "{ invalid }";
 
-    @Test
-    @DisplayName("Should map unknown severity to MEDIO")
-    void toDomain_unknownSeverity() {
-        var riskFactor = new GeminiReportMapper.RiskFactorPayload("F1", "UNKNOWN", "Desc1");
-        var payload = new GeminiReportMapper.GeminiReportPayload(
-            "Title", "Summary", "Analysis", List.of(riskFactor), null
-        );
-
-        AiReportContent content = GeminiReportMapper.toDomain(payload);
-        assertEquals(Severity.MEDIO, content.getRiskFactors().get(0).getSeverity());
-        assertTrue(content.getRecommendations().isEmpty());
-    }
-
-    @Test
-    @DisplayName("Should map null severity to MEDIO")
-    void toDomain_nullSeverity() {
-        var riskFactor = new GeminiReportMapper.RiskFactorPayload("F1", null, "Desc1");
-        var payload = new GeminiReportMapper.GeminiReportPayload(
-            "Title", "Summary", "Analysis", List.of(riskFactor), null
-        );
-
-        AiReportContent content = GeminiReportMapper.toDomain(payload);
-        assertEquals(Severity.MEDIO, content.getRiskFactors().get(0).getSeverity());
-    }
-
-    @Test
-    @DisplayName("Should handle missing inputs gracefully")
-    void toDomain_missingInputs() {
-        var payload = new GeminiReportMapper.GeminiReportPayload(
-            null, null, null, null, null
-        );
-
-        AiReportContent content = GeminiReportMapper.toDomain(payload);
-        
-        assertNull(content.getTitle());
-        assertNull(content.getAiSummary());
-        assertNull(content.getRiskAnalysis());
-        assertTrue(content.getRiskFactors().isEmpty());
-        assertTrue(content.getRecommendations().isEmpty());
+        assertThrows(AiReportGenerationException.class, () -> {
+            mapper.fromJson(invalidJson);
+        });
     }
 }

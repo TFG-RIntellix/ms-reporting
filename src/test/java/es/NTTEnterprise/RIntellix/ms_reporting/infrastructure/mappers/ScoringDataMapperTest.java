@@ -2,7 +2,6 @@ package es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

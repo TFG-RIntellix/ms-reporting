@@ -11,8 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.Models;
 import com.google.genai.types.GenerateContentResponse;
@@ -21,12 +19,12 @@ import com.google.genai.types.GenerateContentConfig;
 
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.ScoringData;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.exceptions.AiReportGenerationException;
+import es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper;
+import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.AiReportContent;
 
 /**
  * Unit tests for {@link GeminiReportAdapter}.
- * Covers successful report generation, empty response handling, serialization
- * errors,
- * API call errors, response parsing errors, and model name retrieval.
+ * @date 27/08/2026
  */
 @DisplayName("GeminiReportAdapter Tests")
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +37,7 @@ class GeminiReportAdapterTest {
         private Models models;
 
         @Mock
-        private ObjectMapper objectMapper;
+        private GeminiReportMapper geminiReportMapper;
 
         private static final String MODEL = "gemini-2.0-flash";
 
@@ -48,7 +46,7 @@ class GeminiReportAdapterTest {
         @BeforeEach
         void setUp() {
                 org.springframework.test.util.ReflectionTestUtils.setField(genaiClient, "models", models);
-                adapter = new GeminiReportAdapter(genaiClient, objectMapper, MODEL);
+                adapter = new GeminiReportAdapter(genaiClient, geminiReportMapper, MODEL);
         }
 
         // ========== getModelName() ==========
@@ -71,8 +69,8 @@ class GeminiReportAdapterTest {
                                 .build();
 
                 String fakeJsonResponse = "{\"summary\":\"Test summary\",\"risk_factors\":[],\"recommendations\":[]}";
-                
-                when(objectMapper.writeValueAsString(scoringData))
+
+                when(geminiReportMapper.toJson(scoringData))
                                 .thenReturn("{\"scoringId\":\"SCO-1\"}");
 
                 GenerateContentResponse mockResponse = mock(GenerateContentResponse.class);
@@ -80,14 +78,12 @@ class GeminiReportAdapterTest {
                 when(models.generateContent(eq(MODEL), any(Content.class), any(GenerateContentConfig.class)))
                                 .thenReturn(mockResponse);
 
-                es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper.GeminiReportPayload fakePayload = 
-                        new es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper.GeminiReportPayload(
-                                "Test title", "Test summary", "Test analysis", java.util.List.of(), java.util.List.of());
-                
-                when(objectMapper.readValue(eq(fakeJsonResponse), eq(es.NTTEnterprise.RIntellix.ms_reporting.infrastructure.mappers.GeminiReportMapper.GeminiReportPayload.class)))
+                AiReportContent fakePayload = AiReportContent.builder().aiSummary("Test summary").build();
+
+                when(geminiReportMapper.fromJson(fakeJsonResponse))
                                 .thenReturn(fakePayload);
 
-                es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.AiReportContent result = adapter.generateReport(scoringData);
+                AiReportContent result = adapter.generateReport(scoringData);
 
                 assertNotNull(result);
                 assertEquals("Test summary", result.getAiSummary());
@@ -96,16 +92,15 @@ class GeminiReportAdapterTest {
         // ========== generateReport() — serialization failure ==========
         @Test
         @DisplayName("Should throw AiReportGenerationException when scoring serialization fails")
-        void generateReport_serializationFails_throwsException() throws JsonProcessingException {
+        void generateReport_serializationFails_throwsException() {
                 ScoringData scoringData = ScoringData.builder()
                                 .scoringId("SCO-1")
                                 .requestId("REQ-1")
                                 .partyId("P-1")
                                 .build();
 
-                when(objectMapper.writeValueAsString(scoringData))
-                                .thenThrow(new JsonProcessingException("Serialization error") {
-                                });
+                when(geminiReportMapper.toJson(scoringData))
+                                .thenThrow(new AiReportGenerationException("Serialization error", null));
 
                 assertThrows(AiReportGenerationException.class,
                                 () -> adapter.generateReport(scoringData));
@@ -122,7 +117,7 @@ class GeminiReportAdapterTest {
                                 .partyId("P-1")
                                 .build();
 
-                when(objectMapper.writeValueAsString(scoringData))
+                when(geminiReportMapper.toJson(scoringData))
                                 .thenReturn("{\"scoringId\":\"SCO-1\"}");
                 when(models.generateContent(eq(MODEL), any(Content.class), any(GenerateContentConfig.class)))
                                 .thenThrow(new RuntimeException("API timeout"));
@@ -145,7 +140,7 @@ class GeminiReportAdapterTest {
                                 .partyId("P-1")
                                 .build();
 
-                when(objectMapper.writeValueAsString(scoringData))
+                when(geminiReportMapper.toJson(scoringData))
                                 .thenReturn("{\"scoringId\":\"SCO-1\"}");
 
                 GenerateContentResponse mockResponse = mock(GenerateContentResponse.class);
@@ -166,7 +161,7 @@ class GeminiReportAdapterTest {
                                 .partyId("P-1")
                                 .build();
 
-                when(objectMapper.writeValueAsString(scoringData))
+                when(geminiReportMapper.toJson(scoringData))
                                 .thenReturn("{\"scoringId\":\"SCO-1\"}");
 
                 GenerateContentResponse mockResponse = mock(GenerateContentResponse.class);
@@ -189,16 +184,15 @@ class GeminiReportAdapterTest {
                                 .partyId("P-1")
                                 .build();
 
-                when(objectMapper.writeValueAsString(scoringData))
+                when(geminiReportMapper.toJson(scoringData))
                                 .thenReturn("{\"scoringId\":\"SCO-1\"}");
 
                 GenerateContentResponse mockResponse = mock(GenerateContentResponse.class);
                 when(mockResponse.text()).thenReturn("{invalid json}");
                 when(models.generateContent(eq(MODEL), any(Content.class), any(GenerateContentConfig.class)))
                                 .thenReturn(mockResponse);
-                when(objectMapper.readValue(eq("{invalid json}"), any(Class.class)))
-                                .thenThrow(new JsonProcessingException("Parse error") {
-                                });
+                when(geminiReportMapper.fromJson(eq("{invalid json}")))
+                                .thenThrow(new AiReportGenerationException("Parse error", null));
 
                 assertThrows(AiReportGenerationException.class,
                                 () -> adapter.generateReport(scoringData));
@@ -210,12 +204,12 @@ class GeminiReportAdapterTest {
         @DisplayName("Constructor should throw NPE when genaiClient is null")
         void constructor_nullClient_throwsNPE() {
                 assertThrows(NullPointerException.class,
-                                () -> new GeminiReportAdapter(null, objectMapper, MODEL));
+                                () -> new GeminiReportAdapter(null, geminiReportMapper, MODEL));
         }
 
         @Test
-        @DisplayName("Constructor should throw NPE when objectMapper is null")
-        void constructor_nullObjectMapper_throwsNPE() {
+        @DisplayName("Constructor should throw NPE when geminiReportMapper is null")
+        void constructor_nullMapper_throwsNPE() {
                 assertThrows(NullPointerException.class,
                                 () -> new GeminiReportAdapter(genaiClient, null, MODEL));
         }
@@ -224,6 +218,6 @@ class GeminiReportAdapterTest {
         @DisplayName("Constructor should throw NPE when model is null")
         void constructor_nullModel_throwsNPE() {
                 assertThrows(NullPointerException.class,
-                                () -> new GeminiReportAdapter(genaiClient, objectMapper, null));
+                                () -> new GeminiReportAdapter(genaiClient, geminiReportMapper, null));
         }
 }

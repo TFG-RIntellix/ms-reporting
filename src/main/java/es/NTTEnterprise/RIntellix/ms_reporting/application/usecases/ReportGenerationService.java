@@ -1,6 +1,5 @@
 package es.NTTEnterprise.RIntellix.ms_reporting.application.usecases;
 
-import java.util.Date;
 import java.util.Objects;
 
 import es.NTTEnterprise.RIntellix.ms_reporting.application.ports.input.ReportGenerationPortService;
@@ -8,7 +7,7 @@ import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.AiReportContent;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.RenderedPdf;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.Report;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.entities.ScoringData;
-import es.NTTEnterprise.RIntellix.ms_reporting.domain.enums.ReportType;
+import es.NTTEnterprise.RIntellix.ms_reporting.domain.factories.ReportFactory;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.FetchScoringPort;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.GenerateAiReportPort;
 import es.NTTEnterprise.RIntellix.ms_reporting.domain.ports.output.RenderReportPdfPort;
@@ -19,13 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Application service orchestrating the risk report generation pipeline:
- * <ol>
- *   <li>Fetch the authoritative scoring (and scoringId/partyId) from
- *       ms-core-data, also acting as the race-condition guard.</li>
- *   <li>Generate the natural-language report through the AI analyst (Gemini).</li>
- *   <li>Render the report to a PDF binary.</li>
- *   <li>Persist the report document through ms-core-data.</li>
- * </ol>
+ * - Fetches the authoritative scoring (and scoringId/partyId) from
+ * ms-core-data, also acting as the race-condition guard.
+ * - Generates the natural-language report through the AI analyst (Gemini).
+ * - Renders the report to a PDF binary.
+ * - Persists the report document through ms-core-data.
  * 
  * @author Lucía Fernández Mancebo
  * @date 29/06/2026
@@ -75,7 +72,7 @@ public class ReportGenerationService implements ReportGenerationPortService {
         log.info(LogMessage.REPORT_AI_GENERATED, requestId, generateAiReportPort.getModelName(),
                 aiContent.getRiskFactors() != null ? aiContent.getRiskFactors().size() : 0);
 
-        final Report report = buildReport(scoringData, aiContent);
+        final Report report = ReportFactory.createReport(scoringData, aiContent, generateAiReportPort.getModelName());
 
         // 3. Render the PDF binary.
         final RenderedPdf pdf = renderReportPdfPort.render(report);
@@ -91,44 +88,5 @@ public class ReportGenerationService implements ReportGenerationPortService {
         log.info(LogMessage.REPORT_PERSISTED, requestId, scoringData.getScoringId(), generationTimeMs);
 
         return report;
-    }
-
-    /**
-     * Builds the Report aggregate entity from the scoring and AI generated content.
-     *
-     * @param scoringData the scoring source data
-     * @param aiContent   the AI generated content
-     * @return the constructed Report
-     */
-    private Report buildReport(final ScoringData scoringData, final AiReportContent aiContent) {
-        return Report.builder()
-                .partyId(scoringData.getPartyId())
-                .requestId(scoringData.getRequestId())
-                .scoringId(scoringData.getScoringId())
-                .reportType(ReportType.RISK_ANALYSIS)
-                .title(buildTitle(scoringData, aiContent))
-                .aiSummary(aiContent.getAiSummary())
-                .riskAnalysis(aiContent.getRiskAnalysis())
-                .riskFactors(aiContent.getRiskFactors())
-                .recommendations(aiContent.getRecommendations())
-                .generatedBy(ReportConstants.GENERATED_BY)
-                .generatedDate(new Date())
-                .modelVersion(generateAiReportPort.getModelName())
-                .language(ReportConstants.LANGUAGE_SPANISH)
-                .scoringData(scoringData)
-                .build();
-    }
-
-    /**
-     * Builds the report title using the party name, e.g.
-     * {@code "Informe de Evaluación de Riesgo de Crédito - <partyName>"}.
-     * Falls back to the AI-generated title when the party name is not available.
-     */
-    private String buildTitle(final ScoringData scoringData, final AiReportContent aiContent) {
-        final String partyName = scoringData.getPartyName();
-        if (partyName != null && !partyName.isBlank()) {
-            return ReportConstants.REPORT_TITLE_PREFIX + partyName.trim();
-        }
-        return aiContent.getTitle();
     }
 }

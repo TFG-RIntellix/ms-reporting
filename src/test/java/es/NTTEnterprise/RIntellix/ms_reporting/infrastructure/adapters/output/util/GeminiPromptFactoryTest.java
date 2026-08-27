@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.google.genai.types.Schema;
-import com.google.genai.types.Type;
 
 class GeminiPromptFactoryTest {
 
@@ -15,7 +14,7 @@ class GeminiPromptFactoryTest {
     void buildUserMessage_success() {
         String json = "{\"score\": 100}";
         String result = GeminiPromptFactory.buildUserMessage(json);
-        
+
         assertNotNull(result);
         assertTrue(result.contains("Datos de scoring (JSON):"));
         assertTrue(result.contains(json));
@@ -25,7 +24,7 @@ class GeminiPromptFactoryTest {
     @DisplayName("Should build response schema correctly")
     void responseSchema_success() {
         Schema schema = GeminiPromptFactory.responseSchema();
-        
+
         assertNotNull(schema);
     }
 }
