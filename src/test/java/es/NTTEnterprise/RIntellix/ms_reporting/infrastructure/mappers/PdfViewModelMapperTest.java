@@ -80,9 +80,9 @@ class PdfViewModelMapperTest {
         ScoringData data = new ScoringData();
         data.setDti(0.20);
         data.setInputFeatures(Map.of(
-                "loanType", "CREDIT_CARD",
+                "loanType", "TARJETA_CREDITO",
                 "loanAmount", 0.0,
-                "creditLimit", 5000.0,
+                "requestedLimit", 5000.0,
                 "interestRate", 0.22,
                 "isRevolving", "no"
         ));
@@ -113,9 +113,9 @@ class PdfViewModelMapperTest {
         ScoringData data = new ScoringData();
         data.setDti(0.30);
         data.setInputFeatures(Map.of(
-                "loanType", "CREDIT_CARD",
+                "loanType", "TARJETA_CREDITO",
                 "loanAmount", 0.0,
-                "creditLimit", 10000.0,
+                "requestedLimit", 10000.0,
                 "interestRate", 0.18,
                 "isRevolving", "si"
         ));
