@@ -96,7 +96,7 @@ public class PdfViewModelMapper {
         }
 
         if (!isCreditCard || isRevolving) {
-            financials.add(Map.of("label", "Tasa de Interés", "value", formatPercent(interestRate)));
+            financials.add(Map.of("label", "Tasa de Interés", "value", formatPercent(interestRate / 100.0)));
         }
 
         financials.add(Map.of("label", "Plazo", "value", termMonths + " meses"));

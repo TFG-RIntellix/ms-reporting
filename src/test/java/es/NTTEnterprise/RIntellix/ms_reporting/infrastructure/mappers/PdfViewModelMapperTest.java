@@ -83,7 +83,7 @@ class PdfViewModelMapperTest {
                 "loanType", "TARJETA_CREDITO",
                 "loanAmount", 0.0,
                 "requestedLimit", 5000.0,
-                "interestRate", 0.22,
+                "interestRate", 22.0,
                 "isRevolving", "no"
         ));
 
@@ -116,7 +116,7 @@ class PdfViewModelMapperTest {
                 "loanType", "TARJETA_CREDITO",
                 "loanAmount", 0.0,
                 "requestedLimit", 10000.0,
-                "interestRate", 0.18,
+                "interestRate", 18.0,
                 "isRevolving", "si"
         ));
 
