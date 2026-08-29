@@ -72,7 +72,7 @@ public class PdfViewModelMapper {
             Object la = data.getInputFeatures().get("loanAmount");
             Double parsedLa = parseDoubleStrict(la);
             if (parsedLa == 0.0) {
-                loanAmount = parseDoubleStrict(data.getInputFeatures().get("creditLimit"));
+                loanAmount = parseDoubleStrict(data.getInputFeatures().get("requestedLimit"));
             } else {
                 loanAmount = parsedLa;
             }
@@ -88,7 +88,7 @@ public class PdfViewModelMapper {
         financials.add(Map.of("label", "Cuota Mensual", "value", currencyFormat.format(safeDouble(data.getMonthlyPayment()))));
         financials.add(Map.of("label", "Ingreso Disponible", "value", currencyFormat.format(safeDouble(data.getMonthlyDisposableIncome()))));
 
-        boolean isCreditCard = data.getInputFeatures() != null && "CREDIT_CARD".equalsIgnoreCase(String.valueOf(data.getInputFeatures().get("loanType")));
+        boolean isCreditCard = data.getInputFeatures() != null && "TARJETA_CREDITO".equalsIgnoreCase(String.valueOf(data.getInputFeatures().get("loanType")));
         boolean isRevolving = false;
         if (data.getInputFeatures() != null && data.getInputFeatures().containsKey("isRevolving")) {
             String revStr = String.valueOf(data.getInputFeatures().get("isRevolving")).toLowerCase();
