@@ -69,26 +69,39 @@ public class PdfViewModelMapper {
 
         if (data.getInputFeatures() != null) {
             annualIncome = parseDoubleStrict(data.getInputFeatures().get("annualIncome"));
-            loanAmount = parseDoubleStrict(data.getInputFeatures().get("loanAmount") != null
-                    ? data.getInputFeatures().get("loanAmount")
-                    : data.getInputFeatures().get("creditLimit"));
+            Object la = data.getInputFeatures().get("loanAmount");
+            Double parsedLa = parseDoubleStrict(la);
+            if (parsedLa == 0.0) {
+                loanAmount = parseDoubleStrict(data.getInputFeatures().get("creditLimit"));
+            } else {
+                loanAmount = parsedLa;
+            }
             interestRate = parseDoubleStrict(data.getInputFeatures().get("interestRate"));
             Object termObj = data.getInputFeatures().get("termMonths");
             termMonths = termObj instanceof Number ? ((Number) termObj).intValue() : 0;
             ltv = parseDoubleStrict(data.getInputFeatures().get("ltv"));
         }
 
-        final List<Map<String, String>> financials = List.of(
-                Map.of("label", "Ingreso Anual", "value", currencyFormat.format(safeDouble(annualIncome))),
-                Map.of("label", "Monto Solicitado", "value", currencyFormat.format(safeDouble(loanAmount))),
-                Map.of("label", "Cuota Mensual", "value",
-                        currencyFormat.format(safeDouble(data.getMonthlyPayment()))),
-                Map.of("label", "Ingreso Disponible", "value",
-                        currencyFormat.format(safeDouble(data.getMonthlyDisposableIncome()))),
-                Map.of("label", "Tasa de Interés", "value", formatPercent(interestRate)),
-                Map.of("label", "Plazo", "value", termMonths + " meses"),
-                Map.of("label", "LTV", "value", ltv > 0 ? formatPercent(ltv) : "N/A"),
-                Map.of("label", "DTI", "value", formatPercent(data.getDti())));
+        final List<Map<String, String>> financials = new ArrayList<>();
+        financials.add(Map.of("label", "Ingreso Anual", "value", currencyFormat.format(safeDouble(annualIncome))));
+        financials.add(Map.of("label", "Monto Solicitado", "value", currencyFormat.format(safeDouble(loanAmount))));
+        financials.add(Map.of("label", "Cuota Mensual", "value", currencyFormat.format(safeDouble(data.getMonthlyPayment()))));
+        financials.add(Map.of("label", "Ingreso Disponible", "value", currencyFormat.format(safeDouble(data.getMonthlyDisposableIncome()))));
+
+        boolean isCreditCard = data.getInputFeatures() != null && "CREDIT_CARD".equalsIgnoreCase(String.valueOf(data.getInputFeatures().get("loanType")));
+        boolean isRevolving = false;
+        if (data.getInputFeatures() != null && data.getInputFeatures().containsKey("isRevolving")) {
+            String revStr = String.valueOf(data.getInputFeatures().get("isRevolving")).toLowerCase();
+            isRevolving = "true".equals(revStr) || "si".equals(revStr) || "sí".equals(revStr);
+        }
+
+        if (!isCreditCard || isRevolving) {
+            financials.add(Map.of("label", "Tasa de Interés", "value", formatPercent(interestRate)));
+        }
+
+        financials.add(Map.of("label", "Plazo", "value", termMonths + " meses"));
+        financials.add(Map.of("label", "LTV", "value", ltv > 0 ? formatPercent(ltv) : "N/A"));
+        financials.add(Map.of("label", "DTI", "value", formatPercent(data.getDti())));
 
         final Double dtiVal = safeDouble(data.getDti());
         final String dti = formatPercent(dtiVal);
